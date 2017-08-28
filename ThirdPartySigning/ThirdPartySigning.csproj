@@ -23,11 +23,11 @@
     </FilesToSign>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Antlr4.Runtime">
-      <Version>4.5.3</Version>
+    <PackageReference Include="Antlr4.Runtime" Version="4.5.3">
+      <IncludeAssets>All</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="log4net">
-      <Version>2.0.5</Version>
+    <PackageReference Include="log4net" Version="2.0.5">
+      <IncludeAssets>All</IncludeAssets>
     </PackageReference>
     <PackageReference Include="MicroBuild.Core">
       <Version>0.2.0</Version>
