@@ -34,6 +34,6 @@
     </PackageReference>
   </ItemGroup>
   <!-- Skip CoreCompile as we have no files to compile -->
-  <Target name="CoreCompile" />
+  <Target Name="CoreCompile" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
