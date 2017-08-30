@@ -3,10 +3,10 @@
     <PropertyGroup>
         <EnlistmentRoot>$(MSBuildThisFileDirectory)</EnlistmentRoot>
 
-        <OutDir>$(EnlistmentRoot)out\binaries\$(SolutionName)\$(Configuration)\$(MSBuildProjectName)\</OutDir>
+        <OutDir>$(EnlistmentRoot)out\binaries\$(Configuration)\$(MSBuildProjectName)\</OutDir>
         <OutputPath>$(OutDir)</OutputPath>
 
-        <IntDir>$(EnlistmentRoot)out\intermediate\$(SolutionName)\$(Configuration)\$(MSBuildProjectName)\</IntDir>
+        <IntDir>$(EnlistmentRoot)out\intermediate\$(Configuration)\$(MSBuildProjectName)\</IntDir>
         <IntermediateOutputPath>$(IntDir)</IntermediateOutputPath>
         <BaseIntermediateOutputPath>$(IntDir)</BaseIntermediateOutputPath>
     </PropertyGroup>
