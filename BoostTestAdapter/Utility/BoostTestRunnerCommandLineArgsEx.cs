@@ -54,12 +54,34 @@ namespace BoostTestAdapter.Utility
             // Default working directory
             args.WorkingDirectory = Path.GetDirectoryName(source);
 
+            if (settings.CTestProperties != null)
+            {
+                var normalizedSource = source.Replace('/', '\\');
+
+                foreach (var test in settings.CTestProperties)
+                {
+                    var normalizedCommand = test.Command.Replace('/', '\\');
+                    if (normalizedCommand.Equals(normalizedSource, StringComparison.OrdinalIgnoreCase))
+                    {
+                        var environment = string.Empty;
+                        foreach (var v in test.Environment)
+                        {
+                            environment += $"{v.Name}={v.Value}\n";
+                        }
+
+                        args.SetEnvironment(environment);
+                        args.WorkingDirectory = test.WorkingDirectory;
+                        break;
+                    }
+                }
+            }
+
             // Working directory extracted from test settings
             if (!string.IsNullOrEmpty(settings.WorkingDirectory) && Directory.Exists(settings.WorkingDirectory))
             {
                 args.WorkingDirectory = settings.WorkingDirectory;
             }
-
+            
             // Visual Studio configuration (if available) has higher priority over settings
             var debuggingProperties = packageService?.Service.GetDebuggingPropertiesAsync(source).Result;
             if (debuggingProperties != null)

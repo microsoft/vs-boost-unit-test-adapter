@@ -130,6 +130,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Settings\BoostTestInternalSettings.cs" />
+    <Compile Include="Settings\CTestPropertySettings.cs" />
     <Compile Include="Utility\BoostDataTestCaseVerifier.cs" />
     <Compile Include="Utility\VisualStudio\DefaultBoostTestPackageServiceFactory.cs" />
     <Compile Include="Utility\VisualStudio\IBoostTestPackageServiceFactory.cs" />
@@ -175,6 +176,10 @@
     <EmbeddedResource Include="BoostTestInternalSettings.xsd">
       <SubType>Designer</SubType>
       <LogicalName>BoostTestInternalSettings.xsd</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CTestPropertySettings.xsd">
+      <SubType>Designer</SubType>
+      <LogicalName>CTestPropertySettings.xsd</LogicalName>
     </EmbeddedResource>
     <ProjectReference Include="..\Antlr.DOT\Antlr.DOT.csproj">
       <Project>{488ae1ce-107d-4f5b-9f1f-ed7905d5ce75}</Project>

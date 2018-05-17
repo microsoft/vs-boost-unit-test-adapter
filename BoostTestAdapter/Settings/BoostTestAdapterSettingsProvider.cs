@@ -106,6 +106,13 @@ namespace BoostTestAdapter.Settings
                 settings.ParentVSProcessId = runSettings.VSProcessId;
             }
 
+            CTestPropertySettingsProvider cTestPropertySettings = (context.RunSettings == null) ? null : context.RunSettings.GetSettings(CTestPropertySettingsConstants.SettingsName) as CTestPropertySettingsProvider;
+
+            if (cTestPropertySettings != null)
+            {
+                settings.CTestProperties = cTestPropertySettings.CTestProperySettings.Tests;
+            }
+
             // Return defaults
             return settings;
         }

@@ -7,6 +7,7 @@
 
 using BoostTestAdapter.Boost.Runner;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Xml;
 using System.Xml.Serialization;
@@ -243,6 +244,12 @@ namespace BoostTestAdapter.Settings
         /// </summary>
         [XmlIgnore]
         public int ParentVSProcessId { get; set; }
+
+        /// <summary>
+        /// Property settings set by CTest that we need to apply to the associated tests.
+        /// </summary>
+        [XmlIgnore]
+        public List<CTestPropertySettingsContainer.TestProperties> CTestProperties { get; set; }
 
         #endregion Properties
 
