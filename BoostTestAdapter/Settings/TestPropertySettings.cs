@@ -16,13 +16,13 @@ using System.Xml.XPath;
 
 namespace BoostTestAdapter.Settings
 {
-    public static class CTestPropertySettingsConstants
+    public static class TestPropertySettingsConstants
     {
-        public const string SettingsName = "CTestProperties";
+        public const string SettingsName = "TestPropertySettings";
     }
 
-    [XmlRoot(CTestPropertySettingsConstants.SettingsName)]
-    public class CTestPropertySettingsContainer : TestRunSettings
+    [XmlRoot(TestPropertySettingsConstants.SettingsName)]
+    public class TestPropertySettingsContainer : TestRunSettings
     {
         public class EnvVar
         {
@@ -38,8 +38,8 @@ namespace BoostTestAdapter.Settings
             public string WorkingDirectory { get; set; }
         }
 
-        public CTestPropertySettingsContainer()
-            : base(CTestPropertySettingsConstants.SettingsName)
+        public TestPropertySettingsContainer()
+            : base(TestPropertySettingsConstants.SettingsName)
         {
         }
 
@@ -58,19 +58,19 @@ namespace BoostTestAdapter.Settings
     }
 
     [Export(typeof(ISettingsProvider))]
-    [SettingsName(CTestPropertySettingsConstants.SettingsName)]
-    public class CTestPropertySettingsProvider : ISettingsProvider
+    [SettingsName(TestPropertySettingsConstants.SettingsName)]
+    public class TestPropertySettingsProvider : ISettingsProvider
     {
-        public string Name => CTestPropertySettingsConstants.SettingsName;
+        public string Name => TestPropertySettingsConstants.SettingsName;
 
-        public CTestPropertySettingsContainer CTestProperySettings { get; set; }
+        public TestPropertySettingsContainer TestProperySettings { get; set; }
 
         public void Load(XmlReader reader)
         {
             Utility.Code.Require(reader, "reader");
 
             var schemaSet = new XmlSchemaSet();
-            var schemaStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("CTestPropertySettings.xsd");
+            var schemaStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("TestPropertySettings.xsd");
             schemaSet.Add(null, XmlReader.Create(schemaStream));
 
             var settings = new XmlReaderSettings
@@ -88,14 +88,14 @@ namespace BoostTestAdapter.Settings
                 {
                     if (newReader.Read() && newReader.Name.Equals(this.Name))
                     {
-                        XmlSerializer deserializer = new XmlSerializer(typeof(CTestPropertySettingsContainer));
-                        this.CTestProperySettings = deserializer.Deserialize(newReader) as CTestPropertySettingsContainer;
+                        XmlSerializer deserializer = new XmlSerializer(typeof(TestPropertySettingsContainer));
+                        this.TestProperySettings = deserializer.Deserialize(newReader) as TestPropertySettingsContainer;
                     }
                 }
                 catch (InvalidOperationException e) when (e.InnerException is XmlSchemaValidationException)
                 {
                     throw new BoostTestAdapterSettingsProvider.InvalidBoostTestAdapterSettingsException(
-                        String.Format(Resources.InvalidPropertyFile, CTestPropertySettingsConstants.SettingsName, e.InnerException.Message),
+                        String.Format(Resources.InvalidPropertyFile, TestPropertySettingsConstants.SettingsName, e.InnerException.Message),
                         e.InnerException);
                 }
             }

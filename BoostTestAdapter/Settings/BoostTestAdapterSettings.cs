@@ -246,10 +246,10 @@ namespace BoostTestAdapter.Settings
         public int ParentVSProcessId { get; set; }
 
         /// <summary>
-        /// Property settings set by CTest that we need to apply to the associated tests.
+        /// Test property settings that we need to apply to the associated tests.
         /// </summary>
         [XmlIgnore]
-        public List<CTestPropertySettingsContainer.TestProperties> CTestProperties { get; set; }
+        public List<TestPropertySettingsContainer.TestProperties> TestProperties { get; set; }
 
         #endregion Properties
 

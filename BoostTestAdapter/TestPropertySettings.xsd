@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:element name="CTestProperties" nillable="true" type="CTestPropertySettingsContainer" />
-  <xs:complexType name="CTestPropertySettingsContainer">
+  <xs:element name="TestPropertySettings" nillable="true" type="TestPropertySettingsContainer" />
+  <xs:complexType name="TestPropertySettingsContainer">
     <xs:complexContent mixed="false">
       <xs:extension base="TestRunSettings">
         <xs:sequence>

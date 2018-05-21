@@ -54,11 +54,11 @@ namespace BoostTestAdapter.Utility
             // Default working directory
             args.WorkingDirectory = Path.GetDirectoryName(source);
 
-            if (settings.CTestProperties != null)
+            if (settings.TestProperties != null)
             {
                 var normalizedSource = source.Replace('/', '\\');
 
-                foreach (var test in settings.CTestProperties)
+                foreach (var test in settings.TestProperties)
                 {
                     var normalizedCommand = test.Command.Replace('/', '\\');
                     if (normalizedCommand.Equals(normalizedSource, StringComparison.OrdinalIgnoreCase))
