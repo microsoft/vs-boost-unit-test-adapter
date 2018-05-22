@@ -110,7 +110,7 @@ namespace BoostTestAdapter.Settings
 
             if (testPropertySettingsProvider != null)
             {
-                settings.TestProperties = testPropertySettingsProvider.TestProperySettings.Tests;
+                settings.TestProperties = testPropertySettingsProvider.TestPropertySettings.Tests;
             }
 
             // Return defaults

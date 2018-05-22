@@ -3,22 +3,19 @@
 
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
-using Microsoft.VisualStudio.TestWindow.Extensibility;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using System.Xml.XPath;
 
 namespace BoostTestAdapter.Settings
 {
     public static class TestPropertySettingsConstants
     {
-        public const string SettingsName = "TestPropertySettings";
+        public const string SettingsName = "TestPropertySettingsForBoostAdapter";
     }
 
     [XmlRoot(TestPropertySettingsConstants.SettingsName)]
@@ -63,7 +60,7 @@ namespace BoostTestAdapter.Settings
     {
         public string Name => TestPropertySettingsConstants.SettingsName;
 
-        public TestPropertySettingsContainer TestProperySettings { get; set; }
+        public TestPropertySettingsContainer TestPropertySettings { get; set; }
 
         public void Load(XmlReader reader)
         {
@@ -89,7 +86,7 @@ namespace BoostTestAdapter.Settings
                     if (newReader.Read() && newReader.Name.Equals(this.Name))
                     {
                         XmlSerializer deserializer = new XmlSerializer(typeof(TestPropertySettingsContainer));
-                        this.TestProperySettings = deserializer.Deserialize(newReader) as TestPropertySettingsContainer;
+                        this.TestPropertySettings = deserializer.Deserialize(newReader) as TestPropertySettingsContainer;
                     }
                 }
                 catch (InvalidOperationException e) when (e.InnerException is XmlSchemaValidationException)
