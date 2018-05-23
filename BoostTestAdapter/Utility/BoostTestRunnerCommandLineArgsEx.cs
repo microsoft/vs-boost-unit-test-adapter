@@ -3,7 +3,7 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-// This file has been modified by Microsoft on 8/2017.
+// This file has been modified by Microsoft on 5/2018.
 
 using BoostTestAdapter.Boost.Runner;
 using BoostTestAdapter.Settings;

@@ -3,7 +3,7 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-// This file has been modified by Microsoft on 4/2018.
+// This file has been modified by Microsoft on 5/2018.
 
 using System;
 using System.ComponentModel.Composition;
