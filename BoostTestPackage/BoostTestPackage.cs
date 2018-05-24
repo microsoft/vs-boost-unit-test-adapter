@@ -16,7 +16,7 @@ namespace BoostTestPackage
     /// </summary>
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
-    [ProvideAutoLoad(UIContextGuid)]
+    [ProvideAutoLoad(UIContextGuid, PackageAutoLoadFlags.BackgroundLoad)]
     [ProvideUIContextRule(UIContextGuid, "Test Adapter for Boost.Test", "VCProject & TestExplorer",
         new string[] { "VCProject", "TestExplorer" },
         new string[] { VSConstants.UICONTEXT.VCProject_string, TestExplorerContextGuid })]
