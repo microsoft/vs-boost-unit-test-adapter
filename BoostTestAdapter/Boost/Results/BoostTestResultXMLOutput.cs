@@ -30,7 +30,7 @@ namespace BoostTestAdapter.Boost.Results
         {
             content = ParseCDataSection(content);
             content = RemoveNullTerminators(content);
-            content = AddXMLEncodingDeclaration(content);
+            content = AddXmlDeclaration(content);
 
             return ParseXml(content);
         }
@@ -45,16 +45,18 @@ namespace BoostTestAdapter.Boost.Results
         protected abstract IDictionary<string, TestResult> ParseXml(string xml);
 
         /// <summary>
-        /// Boost UTF does not add any XML Encoding Declaration in the XML file so in case a file contains German characters,
-        /// upon loading the xml document an exception will be thrown due to un-allowed characters
+        /// Boost UTF does not add any XML declaration in the file so add it
+        /// such that more formal XML parsers don't complain.
+        /// An encoding declaration is pointless as the content has
+        /// already been decoded and converted into UTF-16 by virtue of being in a string.
         /// </summary>
-        /// <param name="path">path of the xml file to be loaded</param>
-        /// <returns>Stream object containing the xml file data</returns>
-        private static string AddXMLEncodingDeclaration(string content)
+        /// <param name="content">The xml file contents</param>
+        /// <returns>The modified xml file contents with a declaration</returns>
+        private static string AddXmlDeclaration(string content)
         {
             if (!content.StartsWith("<?xml", StringComparison.Ordinal))
             { 
-                content = content.Insert(0, "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n");
+                content = content.Insert(0, "<?xml version=\"1.0\"?>\n");
             }
 
             return content;

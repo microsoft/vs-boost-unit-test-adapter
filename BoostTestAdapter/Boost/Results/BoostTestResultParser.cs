@@ -158,17 +158,43 @@ namespace BoostTestAdapter.Boost.Results
         }
 
         /// <summary>
-        /// Reads the contents of the file located at the provided path as an ISO 8859-1 encoded string
+        /// Reads the contents of the boost test results file located at the provided path.
         /// </summary>
         /// <param name="path">The file path to read</param>
-        /// <returns>The contents of the file as an ISO 8859-1 encoded string</returns>
+        /// <returns>The contents of the file</returns>
         private static string ReadAllText(string path)
         {
-            var enc = Encoding.GetEncoding("iso-8859-1");
-            enc = (Encoding) enc.Clone();
-            enc.EncoderFallback = new EncoderReplacementFallback(string.Empty);
+            // The encoding of boost test results files are ill-defined.
+            // Boost itself will write ASCII xml tags, but will embed strings
+            // coming from the application such as exception messages,
+            // which might have any encoding.
 
-            return File.ReadAllText(path, enc);
+            // If compiled with cl.exe, the strings in the program binary will
+            // have the same encoding as the source file. Since they are
+            // output to std::cout by boost, they have to be multibyte encodings (not UTF-16),
+            // so there are two reasonable encodings to handle: UTF-8 and ANSI.
+
+            // UTF-8 is preferred as it can represent all of Unicode,
+            // and has properties that make it unlikely that it will
+            // succeed to decode strings that were not encoded as UTF-8,
+            // and will also succeed if the file is pure ASCII, so try it first.
+            try
+            {
+                var encoding = (Encoding)Encoding.UTF8.Clone();
+                encoding.DecoderFallback = DecoderFallback.ExceptionFallback;
+                return File.ReadAllText(path, encoding);
+            }
+            catch (DecoderFallbackException)
+            {
+                // It wasn't UTF-8 nor ASCII. Plan B: ANSI.
+                // For exception messages, this assumes that the source code
+                // was saved as ANSI as well and on the same machine as
+                // the test is running (since ANSI encodings vary with the OS language),
+                // but this is the best we can do.
+                var encoding = (Encoding)Encoding.Default.Clone();
+                encoding.DecoderFallback = new DecoderReplacementFallback(string.Empty);
+                return File.ReadAllText(path, encoding);
+            }
         }
 
         #endregion IBoostTestResultOutput Factory Methods
