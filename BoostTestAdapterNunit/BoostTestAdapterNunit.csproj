@@ -68,6 +68,10 @@
       <Project>{488ae1ce-107d-4f5b-9f1f-ed7905d5ce75}</Project>
       <Name>Antlr.DOT</Name>
     </ProjectReference>
+	<ProjectReference Include="..\BoostTestAdapter\BoostTestAdapter.csproj">
+      <Project>{bc4b3bed-9241-4dd6-8070-a9b66dfc08c1}</Project>
+    <Name>BoostTestAdapter</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BoostTestShared\BoostTestShared.csproj">
       <Project>{678B7C85-7906-46DD-810C-E0EF0121B3B3}</Project>
       <Name>BoostTestShared</Name>
