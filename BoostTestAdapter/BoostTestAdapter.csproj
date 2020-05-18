@@ -225,7 +225,7 @@ xcopy /c /i /y $(TargetFileName).config $(OutDir)\..\BoostTestAdapterNunit
   <Target Name="GatherLocalizedOutputsForSigning" Condition="'$(LocalizationEnabled)' == 'true' AND '$(RealSign)' == 'True'">
     <ItemGroup>
       <FilesToSign Include="$(OutDir)\localize\**\$(AssemblyName).resources.dll">
-        <Authenticode>Microsoft</Authenticode>
+        <Authenticode>Microsoft400</Authenticode>
         <StrongName>StrongName</StrongName>
       </FilesToSign>
     </ItemGroup>
