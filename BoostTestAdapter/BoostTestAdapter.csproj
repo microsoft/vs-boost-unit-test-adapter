@@ -2,7 +2,7 @@
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), Common.props))\Common.props" />
-  <Import Project="$(NuGetPackages)\MicroBuild.Core.0.2.0\build\MicroBuild.Core.props" />
+  <Import Project="$(NuGetPackages)\MicroBuild.Core.0.2.0\build\MicroBuild.Core.props" Condition="Exists('$(NuGetPackages)\MicroBuild.Core.0.2.0\build\MicroBuild.Core.props')"/>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -221,7 +221,7 @@ xcopy /c /i /y $(TargetFileName).config $(OutDir)\..\BoostTestAdapterNunit
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Import Project="$(NuGetPackages)\MicroBuild.Core.0.2.0\build\MicroBuild.Core.targets" />
+  <Import Project="$(NuGetPackages)\MicroBuild.Core.0.2.0\build\MicroBuild.Core.targets" Condition="Exists('$(NuGetPackages)\MicroBuild.Core.0.2.0\build\MicroBuild.Core.targets')"/>
   <Target Name="GatherLocalizedOutputsForSigning" Condition="'$(LocalizationEnabled)' == 'true' AND '$(RealSign)' == 'True'">
     <ItemGroup>
       <FilesToSign Include="$(OutDir)\localize\**\$(AssemblyName).resources.dll">
