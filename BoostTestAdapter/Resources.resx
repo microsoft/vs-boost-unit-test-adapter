@@ -318,4 +318,13 @@
     <comment>{0} represents a file path
 {1} represents a numeric process error code</comment>
   </data>
+  <data name="ExtensionDescription" xml:space="preserve">
+    <value>Enables Visual Studio's testing tools with unit tests written for Boost.Test.</value>
+  </data>
+  <data name="ExtensionName" xml:space="preserve">
+    <value>Test Adapter for Boost.Test</value>
+  </data>
+  <data name="NewItemDescription" xml:space="preserve">
+    <value>A Boost.Test based unit test.</value>
+  </data>
 </root>
