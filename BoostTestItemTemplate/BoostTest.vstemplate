@@ -2,7 +2,7 @@
   <TemplateData>
     <Name>Boost.Test</Name>
     <!--<Description>A Boost.Test based unit test.</Description>-->
-    <Description Package="{6e0d1c7a-ef6a-4442-b8ce-9a58b21c3239}" ID="NewItemDescription"/>
+    <Description Package="{6e0d1c7a-ef6a-4442-b8ce-9a58b21c3239}" ID="113"/>
     <ProjectType>VC</ProjectType>
     <TemplateID>Microsoft.VisualC.Item.BoostTest</TemplateID>
     <SortOrder>10</SortOrder>
