@@ -49,24 +49,25 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BoostTestPackage.cs" />
-    <Compile Include="BoostTestPackage.Designer.cs">
+    <Compile Include="VSPackage.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>BoostTestPackage.resx</DependentUpon>
+      <DependentUpon>VSPackage.resx</DependentUpon>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BoostTestPackageService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="BoostTestPackage.resx">
+    <EmbeddedResource Include="VSPackage.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>BoostTestPackage.Designer.cs</LastGenOutput>
+      <LastGenOutput>VSPackage.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
