@@ -196,24 +196,6 @@ namespace BoostTestAdapter {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enables Visual Studio&apos;s testing tools with unit tests written for Boost.Test..
-        /// </summary>
-        internal static string ExtensionDescription {
-            get {
-                return ResourceManager.GetString("ExtensionDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Test Adapter for Boost.Test.
-        /// </summary>
-        internal static string ExtensionName {
-            get {
-                return ResourceManager.GetString("ExtensionName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Process could not be added to Job Object. Test process may end up orphaned on abrupt closure..
         /// </summary>
         internal static string FailedToAddProcess {
@@ -318,15 +300,6 @@ namespace BoostTestAdapter {
         internal static string LoggerInitialized {
             get {
                 return ResourceManager.GetString("LoggerInitialized", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A Boost.Test based unit test..
-        /// </summary>
-        internal static string NewItemDescription {
-            get {
-                return ResourceManager.GetString("NewItemDescription", resourceCulture);
             }
         }
         
