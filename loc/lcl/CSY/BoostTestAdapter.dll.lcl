@@ -176,7 +176,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Finding processes spawned by process with Id [{0}]5D;]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Hledají se procesy vygenerované procesem s ID [{0}]5D;.]]></Val>
+            <Val><![CDATA[Hledají se podřízené procesy vytvořené procesem s ID [{0}]5D;.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -186,6 +186,15 @@
           <Val><![CDATA[Found test: {0}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Našel se test: {0}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ImageDirectoryEntryToData" ItemType="0" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[ImageDirectoryEntryToData failed!]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Operace ImageDirectoryEntryToData byla neúspěšná!]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -347,7 +356,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Test setup error: no test cases matching filter (test name contains commas)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Chyba nastavení testu: filtru neodpovídají žádné testovací případy (názvy testů obsahují čárky).]]></Val>
+            <Val><![CDATA[Chyba nastavení testu: Filtru neodpovídají žádné testovací případy (názvy testů obsahují čárky).]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -375,6 +384,15 @@
           <Val><![CDATA[Timeout exceeded. Test ran for more than {0} ms.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Vypršel časový limit. Test běžel více než {0} ms.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";UnMapLoad" ItemType="0" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[UnMapAndLoad failed!]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Příkaz UnMapAndLoad byl neúspěšný.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -427,7 +445,7 @@
     <Disp Icon="Ver" Disp="true" LocTbl="false" Path=" \ ;Version \ 8 \ 0" />
     <Item ItemId=";AssemblyVersion" ItemType="0" PsrId="211" Leaf="true">
       <Str Cat="Text" DevLk="true">
-        <Val><![CDATA[1.0.8.1]]></Val>
+        <Val><![CDATA[1.0.8.4]]></Val>
       </Str>
       <Disp Icon="Str" />
     </Item>
@@ -442,7 +460,7 @@
     </Item>
     <Item ItemId=";FileVersion" ItemType="0" PsrId="211" Leaf="true">
       <Str Cat="Text" DevLk="true">
-        <Val><![CDATA[1.0.8.1]]></Val>
+        <Val><![CDATA[1.0.8.4]]></Val>
       </Str>
       <Disp Icon="Str" />
     </Item>
@@ -478,7 +496,7 @@
     </Item>
     <Item ItemId=";ProductVersion" ItemType="0" PsrId="211" Leaf="true">
       <Str Cat="Text" DevLk="true">
-        <Val><![CDATA[1.0.8.1]]></Val>
+        <Val><![CDATA[1.0.8.4]]></Val>
       </Str>
       <Disp Icon="Str" />
     </Item>

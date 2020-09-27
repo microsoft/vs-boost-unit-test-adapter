@@ -95,7 +95,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Discovering ({0}):   -> [{1}]5D;]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[探索中 ({0}): -> [{1}]5D;]]></Val>
+            <Val><![CDATA[検出中 ({0}):   -> [{1}]5D;]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -104,7 +104,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Exception caught while discovering tests: {0} ({1})]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[テストの探索中に例外がキャッチされました: {0} ({1})]]></Val>
+            <Val><![CDATA[テストの検出中に例外がキャッチされました: {0} ({1})]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -113,7 +113,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Exception caught while discovering tests for {0} ({1} - {2})]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[{0} のテストの探索中に例外がキャッチされました ({1} - {2})]]></Val>
+            <Val><![CDATA[{0} のテストの検出中に例外がキャッチされました ({1} - {2})]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -186,6 +186,15 @@
           <Val><![CDATA[Found test: {0}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[検出されたテスト: {0}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ImageDirectoryEntryToData" ItemType="0" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[ImageDirectoryEntryToData failed!]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[ImageDirectoryEntryToData が失敗しました。]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -347,7 +356,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Test setup error: no test cases matching filter (test name contains commas)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[テストのセットアップ エラー: フィルターに一致するテスト ケースがありません (テスト名にはコンマが含まれています)]]></Val>
+            <Val><![CDATA[テスト セットアップ エラー: フィルターに一致するテスト ケースがありません (テスト名にはコンマが含まれています)]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -356,7 +365,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Test setup error: no test cases matching filter (test name contains spaces)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[テストのセットアップ エラー: フィルターに一致するテスト ケースがありません (テスト名にはスペースが含まれています)]]></Val>
+            <Val><![CDATA[テスト セットアップ エラー: フィルターに一致するテスト ケースがありません (テスト名にはスペースが含まれています)]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -365,7 +374,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Test setup error: no test cases matching filter]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[テストのセットアップ エラー: フィルターに一致するテスト ケースがありません]]></Val>
+            <Val><![CDATA[テスト セットアップ エラー: フィルターに一致するテスト ケースがありません]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -375,6 +384,15 @@
           <Val><![CDATA[Timeout exceeded. Test ran for more than {0} ms.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[タイムアウトを超えました。テストの実行時間が {0} ms を超えました。]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";UnMapLoad" ItemType="0" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[UnMapAndLoad failed!]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[UnMapAndLoad に失敗しました。]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -427,7 +445,7 @@
     <Disp Icon="Ver" Disp="true" LocTbl="false" Path=" \ ;Version \ 8 \ 0" />
     <Item ItemId=";AssemblyVersion" ItemType="0" PsrId="211" Leaf="true">
       <Str Cat="Text" DevLk="true">
-        <Val><![CDATA[1.0.8.1]]></Val>
+        <Val><![CDATA[1.0.8.3]]></Val>
       </Str>
       <Disp Icon="Str" />
     </Item>
@@ -442,7 +460,7 @@
     </Item>
     <Item ItemId=";FileVersion" ItemType="0" PsrId="211" Leaf="true">
       <Str Cat="Text" DevLk="true">
-        <Val><![CDATA[1.0.8.1]]></Val>
+        <Val><![CDATA[1.0.8.3]]></Val>
       </Str>
       <Disp Icon="Str" />
     </Item>
@@ -478,7 +496,7 @@
     </Item>
     <Item ItemId=";ProductVersion" ItemType="0" PsrId="211" Leaf="true">
       <Str Cat="Text" DevLk="true">
-        <Val><![CDATA[1.0.8.1]]></Val>
+        <Val><![CDATA[1.0.8.3]]></Val>
       </Str>
       <Disp Icon="Str" />
     </Item>

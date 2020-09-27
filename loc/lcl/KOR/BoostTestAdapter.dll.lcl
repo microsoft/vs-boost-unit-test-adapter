@@ -190,6 +190,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";ImageDirectoryEntryToData" ItemType="0" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[ImageDirectoryEntryToData failed!]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[ImageDirectoryEntryToData에 실패했습니다.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";InvalidPropertyFile" ItemType="0" PsrId="211" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Invalid file defining property under {0}. {1}]]></Val>
@@ -347,7 +356,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Test setup error: no test cases matching filter (test name contains commas)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[테스트 설치 오류: 필터와 일치하는 테스트 사례가 없습니다(테스트 이름에 쉼표가 포함됨).]]></Val>
+            <Val><![CDATA[테스트 설정 오류: 필터와 일치하는 테스트 사례가 없습니다(테스트 이름에 쉼표가 포함됨).]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -356,7 +365,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Test setup error: no test cases matching filter (test name contains spaces)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[테스트 설치 오류: 필터와 일치하는 테스트 사례가 없습니다(테스트 이름에 공백이 포함됨).]]></Val>
+            <Val><![CDATA[테스트 설정 오류: 필터와 일치하는 테스트 사례가 없습니다(테스트 이름에 공백이 포함됨).]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -365,7 +374,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Test setup error: no test cases matching filter]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[테스트 설치 오류: 필터와 일치하는 테스트 사례가 없습니다.]]></Val>
+            <Val><![CDATA[테스트 설정 오류: 필터와 일치하는 테스트 사례가 없습니다.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -375,6 +384,15 @@
           <Val><![CDATA[Timeout exceeded. Test ran for more than {0} ms.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[제한 시간이 초과되었습니다. {0}ms 이상 테스트를 실행했습니다.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";UnMapLoad" ItemType="0" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[UnMapAndLoad failed!]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[UnMapAndLoad에 실패했습니다.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -427,7 +445,7 @@
     <Disp Icon="Ver" Disp="true" LocTbl="false" Path=" \ ;Version \ 8 \ 0" />
     <Item ItemId=";AssemblyVersion" ItemType="0" PsrId="211" Leaf="true">
       <Str Cat="Text" DevLk="true">
-        <Val><![CDATA[1.0.8.1]]></Val>
+        <Val><![CDATA[1.0.8.3]]></Val>
       </Str>
       <Disp Icon="Str" />
     </Item>
@@ -442,7 +460,7 @@
     </Item>
     <Item ItemId=";FileVersion" ItemType="0" PsrId="211" Leaf="true">
       <Str Cat="Text" DevLk="true">
-        <Val><![CDATA[1.0.8.1]]></Val>
+        <Val><![CDATA[1.0.8.3]]></Val>
       </Str>
       <Disp Icon="Str" />
     </Item>
@@ -478,7 +496,7 @@
     </Item>
     <Item ItemId=";ProductVersion" ItemType="0" PsrId="211" Leaf="true">
       <Str Cat="Text" DevLk="true">
-        <Val><![CDATA[1.0.8.1]]></Val>
+        <Val><![CDATA[1.0.8.3]]></Val>
       </Str>
       <Disp Icon="Str" />
     </Item>

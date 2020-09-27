@@ -190,6 +190,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";ImageDirectoryEntryToData" ItemType="0" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[ImageDirectoryEntryToData failed!]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Falha de ImageDirectoryEntryToData!]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";InvalidPropertyFile" ItemType="0" PsrId="211" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Invalid file defining property under {0}. {1}]]></Val>
@@ -329,7 +338,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Successfully terminated process {0}.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Êxito ao terminar o processo de {0}.]]></Val>
+            <Val><![CDATA[Processo {0} finalizado com êxito.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -347,7 +356,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Test setup error: no test cases matching filter (test name contains commas)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Erro de configuração do teste: nenhum caso de teste corresponde ao filtro (teste nome contiver vírgulas)]]></Val>
+            <Val><![CDATA[Erro de configuração do teste: nenhum caso de teste corresponde ao filtro (o nome do teste contém vírgulas)]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -375,6 +384,15 @@
           <Val><![CDATA[Timeout exceeded. Test ran for more than {0} ms.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Tempo limite excedido. O teste foi executado por mais de {0} ms.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";UnMapLoad" ItemType="0" PsrId="211" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[UnMapAndLoad failed!]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Falha de UnMapAndLoad!]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -427,7 +445,7 @@
     <Disp Icon="Ver" Disp="true" LocTbl="false" Path=" \ ;Version \ 8 \ 0" />
     <Item ItemId=";AssemblyVersion" ItemType="0" PsrId="211" Leaf="true">
       <Str Cat="Text" DevLk="true">
-        <Val><![CDATA[1.0.8.1]]></Val>
+        <Val><![CDATA[1.0.8.3]]></Val>
       </Str>
       <Disp Icon="Str" />
     </Item>
@@ -442,7 +460,7 @@
     </Item>
     <Item ItemId=";FileVersion" ItemType="0" PsrId="211" Leaf="true">
       <Str Cat="Text" DevLk="true">
-        <Val><![CDATA[1.0.8.1]]></Val>
+        <Val><![CDATA[1.0.8.3]]></Val>
       </Str>
       <Disp Icon="Str" />
     </Item>
@@ -478,7 +496,7 @@
     </Item>
     <Item ItemId=";ProductVersion" ItemType="0" PsrId="211" Leaf="true">
       <Str Cat="Text" DevLk="true">
-        <Val><![CDATA[1.0.8.1]]></Val>
+        <Val><![CDATA[1.0.8.3]]></Val>
       </Str>
       <Disp Icon="Str" />
     </Item>
