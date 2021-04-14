@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BoostTestAdapterNunit</RootNamespace>
     <AssemblyName>BoostTestAdapterNunit</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -158,9 +158,7 @@
     <PackageReference Include="FakeItEasy">
       <Version>1.13.1</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.TestPlatform.ObjectModel">
-      <Version>15.0.1</Version>
-    </PackageReference>
+    <PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="15.3.0" />
     <PackageReference Include="NUnit">
       <Version>2.6.4</Version>
     </PackageReference>
