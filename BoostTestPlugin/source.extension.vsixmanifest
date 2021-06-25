@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="BoostUnitTestAdapter.95183667-1f65-419b-9cac-c9fbbed28f8b" Version="1.1.0.0" Language="en-US" Publisher="Microsoft" />
+        <Identity Id="BoostUnitTestAdapter.95183667-1f65-419b-9cac-c9fbbed28f8b" Version="0.0.0.0" Language="en-US" Publisher="Microsoft" />
         <DisplayName>Test Adapter for Boost.Test</DisplayName>
         <Description xml:space="preserve">Enables Visual Studio's testing tools with unit tests written for Boost.Test.</Description>
         <PackageId>Microsoft.VisualStudio.VC.Ide.TestAdapterForBoostTest</PackageId>
