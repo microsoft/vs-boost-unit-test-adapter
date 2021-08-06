@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageLanguagePackManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <DisplayName>Adaptador de Teste para Boost.Test</DisplayName>
+    <Description>Habilita as ferramentas de teste do Visual Studio com testes de unidade escritos para o Boost.Test. Os termos de uso e as Notificações de Terceiros estão disponíveis no diretório de instalação da extensão.</Description>
+  </Metadata>
+</PackageLanguagePackManifest>

@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageLanguagePackManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <DisplayName>適用於 Boost.Test 的測試配接器</DisplayName>
+    <Description>啟用 Visual Studio 測試工具，內含為 Boost.Test 撰寫的單元測試。延伸模組安裝目錄中提供使用條款及協力廠商聲明。</Description>
+  </Metadata>
+</PackageLanguagePackManifest>

@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageLanguagePackManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <DisplayName>Boost.Test のテスト アダプター</DisplayName>
+    <Description>Boost.Test 向けに作成された単体テストを含む、Visual Studio のテスト ツールを有効にします。拡張機能のインストール ディレクトリに、使用条件およびサード パーティからの通知が含まれています。</Description>
+  </Metadata>
+</PackageLanguagePackManifest>
