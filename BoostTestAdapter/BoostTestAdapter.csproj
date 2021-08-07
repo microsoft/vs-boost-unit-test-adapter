@@ -10,7 +10,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BoostTestAdapter</RootNamespace>
-    <AssemblyName>BoostTestAdapter</AssemblyName>
+    <AssemblyName>BoostTestAdapter.TestAdapter</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -60,7 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <FilesToLocalize Include="$(OutDir)\BoostTestAdapter.dll">
+    <FilesToLocalize Include="$(OutDir)\BoostTestAdapter.TestAdapter.dll">
       <TranslationFile>$(MSBuildThisFileDirectory)..\loc\lcl\{Lang}\BoostTestAdapter.dll.lcl</TranslationFile>
     </FilesToLocalize>
     <FilesToSign Include="$(OutDir)\$(AssemblyName).dll" Condition="'$(RealSign)' == 'True'">
@@ -206,13 +206,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>REM required for the BoostTestPlugin so that the log4net config file is included as part of the vsix installation
-mkdir $(OutDir)\..\BoostTestPlugin
-xcopy /c /i /y $(TargetFileName).config $(OutDir)\..\BoostTestPlugin
-REM required by some unit tests in LoggerTest.cs so as to have a certain degree of confidence that log4net is actually logging to file
-mkdir $(OutDir)\..\BoostTestAdapterNunit
-xcopy /c /i /y $(TargetFileName).config $(OutDir)\..\BoostTestAdapterNunit
-</PostBuildEvent>
+    <PostBuildEvent></PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

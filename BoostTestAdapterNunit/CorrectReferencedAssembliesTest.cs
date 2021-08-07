@@ -23,7 +23,7 @@ namespace BoostTestAdapterNunit
         /// <param name="dll">the dll name</param>
         /// <param name="assemblyReferenceName">the assembly that we are going to check that is properly referenced</param>
         /// <param name="versionMajor">version number that assembly must have</param>
-        [TestCase("BoostTestAdapter.dll", "Microsoft.VisualStudio.TestPlatform.ObjectModel", 15, TestName = "CorrectlyReferencedBoostTestAdapter", Description = "Microsoft.VisualStudio.TestPlatform.ObjectModel in BoostTestAdapter must point to the VS2017 version")]
+        [TestCase("BoostTestAdapter.TestAdapter.dll", "Microsoft.VisualStudio.TestPlatform.ObjectModel", 15, TestName = "CorrectlyReferencedBoostTestAdapter", Description = "Microsoft.VisualStudio.TestPlatform.ObjectModel in BoostTestAdapter must point to the VS2017 version")]
         [TestCase("VisualStudioAdapter.dll", "Microsoft.VisualStudio.VCProjectEngine", 15, TestName = "CorrectlyReferencedVisualStudioAdapter", Description = "Microsoft.VisualStudio.VCProjectEngine in VisualStudioAdapter must point to the VS2017 version")]
         public void CorrectReferences(string dll, string assemblyReferenceName, int versionMajor)
         {

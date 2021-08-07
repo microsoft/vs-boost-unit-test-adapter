@@ -95,9 +95,9 @@
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="BoostTestAdapter.dll.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="BoostTestAdapter.TestAdapter.dll.config">
       <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="..\ThirdPartyNotices.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
