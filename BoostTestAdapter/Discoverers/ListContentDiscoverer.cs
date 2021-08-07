@@ -15,6 +15,7 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 
 namespace BoostTestAdapter.Discoverers
 {
@@ -110,7 +111,14 @@ namespace BoostTestAdapter.Discoverers
 
                         using (var context = new DefaultProcessExecutionContext())
                         {
-                            resultCode = runner.Execute(args, runnerSettings, context);
+                            var exec = runner.ExecuteAsync(args, runnerSettings, context, CancellationToken.None);
+
+                            if (!exec.Wait(runnerSettings.Timeout))
+                            {
+                                throw new Boost.Runner.TimeoutException(runnerSettings.Timeout);
+                            }
+
+                            resultCode = exec.Result;
                         }
 
                         // Skip sources for which the --list_content file is not available

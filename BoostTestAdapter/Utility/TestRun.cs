@@ -3,10 +3,12 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-using System.Collections.Generic;
 using BoostTestAdapter.Boost.Runner;
-using VSTestCase = Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase;
 using BoostTestAdapter.Utility.ExecutionContext;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using VSTestCase = Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase;
 
 namespace BoostTestAdapter.Utility
 {
@@ -48,9 +50,10 @@ namespace BoostTestAdapter.Utility
         /// Executes the contained IBoostTestRunner with the contained arguments and settings
         /// </summary>
         /// <param name="context">The execution context of spawned sub-processes</param>
-        public void Execute(IProcessExecutionContext context)
+        /// <param name="token">A cancellation token to suspend test execution.</param>
+        public Task<int> ExecuteAsync(IProcessExecutionContext context, CancellationToken token)
         {
-            this.Runner.Execute(this.Arguments, this.Settings, context);
+            return this.Runner.ExecuteAsync(this.Arguments, this.Settings, context, token);
         }
     }
 }
