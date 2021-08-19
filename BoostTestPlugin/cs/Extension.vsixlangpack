@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageLanguagePackManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <DisplayName>Testovací adaptér pro Boost.Test</DisplayName>
+    <Description>Povolí testovací nástroje sady Visual Studio s testy jednotek napsanými pro Boost.Test. V instalačním adresáři rozšíření jsou k dispozici podmínky použití a oznámení třetích stran.</Description>
+  </Metadata>
+</PackageLanguagePackManifest>

@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageLanguagePackManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <DisplayName>Test Adapter for Boost.Test</DisplayName>
+    <Description>Boost.Test용으로 작성된 단위 테스트를 사용하여 Visual Studio의 테스트 도구를 사용하도록 설정합니다. 사용 약관 및 타사 통지는 확장 설치 디렉터리에서 확인할 수 있습니다.</Description>
+  </Metadata>
+</PackageLanguagePackManifest>
