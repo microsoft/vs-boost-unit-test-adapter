@@ -49,7 +49,7 @@
     <Reference Include="Antlr4.Runtime, Version=4.5.0.0, Culture=neutral, PublicKeyToken=09abb75b9ed49849, processorArchitecture=MSIL">
       <HintPath>$(OutDir)\..\ThirdPartySigning\Antlr4.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="log4net">
+    <Reference Include="log4net, Version=2.0.12">
       <HintPath>$(OutDir)\..\ThirdPartySigning\log4net.dll</HintPath>
     </Reference>
     <Reference Include="System">
