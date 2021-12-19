@@ -1,0 +1,318 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FxCopProject Version="14.0" Name="BoostUnitTestAdapter">
+ <ProjectOptions>
+  <SharedProject>True</SharedProject>
+  <Stylesheet Apply="False" />
+  <SaveMessages>
+   <Project Status="Active, Excluded" NewOnly="False" />
+   <Report Status="Active" NewOnly="False" />
+  </SaveMessages>
+  <ProjectFile Compress="True" DefaultTargetCheck="True" DefaultRuleCheck="True" SaveByRuleGroup="" Deterministic="True" />
+  <EnableMultithreadedLoad>True</EnableMultithreadedLoad>
+  <EnableMultithreadedAnalysis>True</EnableMultithreadedAnalysis>
+  <SourceLookup>True</SourceLookup>
+  <AnalysisExceptionsThreshold>10</AnalysisExceptionsThreshold>
+  <RuleExceptionsThreshold>1</RuleExceptionsThreshold>
+  <Spelling Locale="en-US" />
+  <OverrideRuleVisibilities>False</OverrideRuleVisibilities>
+  <CustomDictionaries SearchFxCopDir="True" SearchUserProfile="True" SearchProjectDir="True" />
+  <SearchGlobalAssemblyCache>False</SearchGlobalAssemblyCache>
+  <DoNotSearchPlatformDirectories>False</DoNotSearchPlatformDirectories>
+  <DeadlockDetectionTimeout>120</DeadlockDetectionTimeout>
+  <IgnoreGeneratedCode>False</IgnoreGeneratedCode>
+ </ProjectOptions>
+ <Targets>
+  <AssemblyReferenceDirectories>
+   <Directory>$(ProjectDir)/../NuGetPackagesFlattened/</Directory>
+   <Directory>%ProgramFiles(x86)%/Microsoft SDKs/NuGetPackages/System.Collections.Specialized/4.0.1/ref/net46/</Directory>
+   <Directory>%ProgramFiles(x86)%/Reference Assemblies/Microsoft/Framework/.NETFramework/v4.6/Facades/</Directory>
+   <Directory>%VSPATH%/Common7/IDE/</Directory>
+   <Directory>%VSPATH%/Common7/IDE/CommonExtensions/Microsoft/Editor/</Directory>
+   <Directory>%VSPATH%/Common7/IDE/CommonExtensions/Microsoft/TestWindow/</Directory>
+   <Directory>%VSPATH%/Common7/IDE/PrivateAssemblies/</Directory>
+   <Directory>%VSPATH%/Common7/IDE/PublicAssemblies/</Directory>
+   <Directory>%VSPATH%/VisualStudioIntegration/Common/Assemblies/v4.0/</Directory>
+   <Directory>%windir%/Microsoft.NET/Framework/v4.0.30319/</Directory>
+   <Directory>$(ProjectDir)/../out/binaries/Release/VisualStudioAdapter/</Directory>
+  </AssemblyReferenceDirectories>
+  <Target Name="$(ProjectDir)/../out/vsix/BoostUnitTestAdapter/Antlr.DOT.dll" Analyze="True" AnalyzeAllChildren="True" />
+  <Target Name="$(ProjectDir)/../out/vsix/BoostUnitTestAdapter/BoostTestAdapter.dll" Analyze="True" AnalyzeAllChildren="True" />
+  <Target Name="$(ProjectDir)/../out/vsix/BoostUnitTestAdapter/BoostTestPackage.dll" Analyze="True" AnalyzeAllChildren="True" />
+  <Target Name="$(ProjectDir)/../out/vsix/BoostUnitTestAdapter/BoostTestShared.dll" Analyze="True" AnalyzeAllChildren="True" />
+  <Target Name="$(ProjectDir)/../out/vsix/BoostUnitTestAdapter/VisualStudioAdapter.dll" Analyze="True" AnalyzeAllChildren="True" />
+ </Targets>
+ <Rules>
+  <RuleFiles>
+   <RuleFile Name="$(FxCopDir)\Rules\GlobalizationRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\MSInternalRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\SecurityCryptographyRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\SecurityRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\SecurityTransparencyRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\SecurityWebConfigurationRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\SecurityWebDataflowRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\SecurityXmlRules.dll" Enabled="True" AllRulesEnabled="True" />
+  </RuleFiles>
+  <Groups />
+  <Settings />
+ </Rules>
+ <FxCopReport Version="14.0">
+  <Namespaces>
+   <Namespace Name="Antlr.DOT">
+    <Messages>
+     <Message TypeName="DeclareTypesInMicrosoftOrSystemNamespace" Category="Microsoft.MSInternal" CheckId="CA904" Status="Excluded" Created="2017-09-15 21:40:47Z">
+      <Issue>
+       <Item>Antlr.DOT</Item>
+      </Issue>
+      <Notes>
+       <User Name="bemcmorr">
+        <Note Id="0" />
+       </User>
+      </Notes>
+     </Message>
+    </Messages>
+   </Namespace>
+   <Namespace Name="BoostTestAdapter">
+    <Messages>
+     <Message TypeName="DeclareTypesInMicrosoftOrSystemNamespace" Category="Microsoft.MSInternal" CheckId="CA904" Status="Excluded" Created="2017-09-15 21:40:47Z">
+      <Issue>
+       <Item>BoostTestAdapter</Item>
+      </Issue>
+      <Notes>
+       <User Name="bemcmorr">
+        <Note Id="0" />
+       </User>
+      </Notes>
+     </Message>
+    </Messages>
+   </Namespace>
+   <Namespace Name="BoostTestAdapter.Boost.Results">
+    <Messages>
+     <Message TypeName="DeclareTypesInMicrosoftOrSystemNamespace" Category="Microsoft.MSInternal" CheckId="CA904" Status="Excluded" Created="2017-09-15 21:40:47Z">
+      <Issue>
+       <Item>BoostTestAdapter.Boost.Results</Item>
+      </Issue>
+      <Notes>
+       <User Name="bemcmorr">
+        <Note Id="0" />
+       </User>
+      </Notes>
+     </Message>
+    </Messages>
+   </Namespace>
+   <Namespace Name="BoostTestAdapter.Boost.Results.LogEntryTypes">
+    <Messages>
+     <Message TypeName="DeclareTypesInMicrosoftOrSystemNamespace" Category="Microsoft.MSInternal" CheckId="CA904" Status="Excluded" Created="2017-09-15 21:40:47Z">
+      <Issue>
+       <Item>BoostTestAdapter.Boost.Results.LogEntryTypes</Item>
+      </Issue>
+      <Notes>
+       <User Name="bemcmorr">
+        <Note Id="0" />
+       </User>
+      </Notes>
+     </Message>
+    </Messages>
+   </Namespace>
+   <Namespace Name="BoostTestAdapter.Boost.Runner">
+    <Messages>
+     <Message TypeName="DeclareTypesInMicrosoftOrSystemNamespace" Category="Microsoft.MSInternal" CheckId="CA904" Status="Excluded" Created="2017-09-15 21:40:47Z">
+      <Issue>
+       <Item>BoostTestAdapter.Boost.Runner</Item>
+      </Issue>
+      <Notes>
+       <User Name="bemcmorr">
+        <Note Id="0" />
+       </User>
+      </Notes>
+     </Message>
+    </Messages>
+   </Namespace>
+   <Namespace Name="BoostTestAdapter.Boost.Test">
+    <Messages>
+     <Message TypeName="DeclareTypesInMicrosoftOrSystemNamespace" Category="Microsoft.MSInternal" CheckId="CA904" Status="Excluded" Created="2017-09-15 21:40:47Z">
+      <Issue>
+       <Item>BoostTestAdapter.Boost.Test</Item>
+      </Issue>
+      <Notes>
+       <User Name="bemcmorr">
+        <Note Id="0" />
+       </User>
+      </Notes>
+     </Message>
+    </Messages>
+   </Namespace>
+   <Namespace Name="BoostTestAdapter.Discoverers">
+    <Messages>
+     <Message TypeName="DeclareTypesInMicrosoftOrSystemNamespace" Category="Microsoft.MSInternal" CheckId="CA904" Status="Excluded" Created="2017-09-15 21:40:47Z">
+      <Issue>
+       <Item>BoostTestAdapter.Discoverers</Item>
+      </Issue>
+      <Notes>
+       <User Name="bemcmorr">
+        <Note Id="0" />
+       </User>
+      </Notes>
+     </Message>
+    </Messages>
+   </Namespace>
+   <Namespace Name="BoostTestAdapter.Settings">
+    <Messages>
+     <Message TypeName="DeclareTypesInMicrosoftOrSystemNamespace" Category="Microsoft.MSInternal" CheckId="CA904" Status="Excluded" Created="2017-09-15 21:40:47Z">
+      <Issue>
+       <Item>BoostTestAdapter.Settings</Item>
+      </Issue>
+      <Notes>
+       <User Name="bemcmorr">
+        <Note Id="0" />
+       </User>
+      </Notes>
+     </Message>
+    </Messages>
+   </Namespace>
+   <Namespace Name="BoostTestAdapter.TestBatch">
+    <Messages>
+     <Message TypeName="DeclareTypesInMicrosoftOrSystemNamespace" Category="Microsoft.MSInternal" CheckId="CA904" Status="Excluded" Created="2017-09-15 21:40:47Z">
+      <Issue>
+       <Item>BoostTestAdapter.TestBatch</Item>
+      </Issue>
+      <Notes>
+       <User Name="bemcmorr">
+        <Note Id="0" />
+       </User>
+      </Notes>
+     </Message>
+    </Messages>
+   </Namespace>
+   <Namespace Name="BoostTestAdapter.Utility">
+    <Messages>
+     <Message TypeName="DeclareTypesInMicrosoftOrSystemNamespace" Category="Microsoft.MSInternal" CheckId="CA904" Status="Excluded" Created="2017-09-15 21:40:47Z">
+      <Issue>
+       <Item>BoostTestAdapter.Utility</Item>
+      </Issue>
+      <Notes>
+       <User Name="bemcmorr">
+        <Note Id="0" />
+       </User>
+      </Notes>
+     </Message>
+    </Messages>
+   </Namespace>
+   <Namespace Name="BoostTestAdapter.Utility.ExecutionContext">
+    <Messages>
+     <Message TypeName="DeclareTypesInMicrosoftOrSystemNamespace" Category="Microsoft.MSInternal" CheckId="CA904" Status="Excluded" Created="2017-09-15 21:40:47Z">
+      <Issue>
+       <Item>BoostTestAdapter.Utility.ExecutionContext</Item>
+      </Issue>
+      <Notes>
+       <User Name="bemcmorr">
+        <Note Id="0" />
+       </User>
+      </Notes>
+     </Message>
+    </Messages>
+   </Namespace>
+   <Namespace Name="BoostTestAdapter.Utility.VisualStudio">
+    <Messages>
+     <Message TypeName="DeclareTypesInMicrosoftOrSystemNamespace" Category="Microsoft.MSInternal" CheckId="CA904" Status="Excluded" Created="2017-09-15 21:40:47Z">
+      <Issue>
+       <Item>BoostTestAdapter.Utility.VisualStudio</Item>
+      </Issue>
+      <Notes>
+       <User Name="bemcmorr">
+        <Note Id="0" />
+       </User>
+      </Notes>
+     </Message>
+    </Messages>
+   </Namespace>
+   <Namespace Name="BoostTestPackage">
+    <Messages>
+     <Message TypeName="DeclareTypesInMicrosoftOrSystemNamespace" Category="Microsoft.MSInternal" CheckId="CA904" Status="Excluded" Created="2017-09-15 21:40:47Z">
+      <Issue>
+       <Item>BoostTestPackage</Item>
+      </Issue>
+      <Notes>
+       <User Name="bemcmorr">
+        <Note Id="0" />
+       </User>
+      </Notes>
+     </Message>
+    </Messages>
+   </Namespace>
+   <Namespace Name="BoostTestShared">
+    <Messages>
+     <Message TypeName="DeclareTypesInMicrosoftOrSystemNamespace" Category="Microsoft.MSInternal" CheckId="CA904" Status="Excluded" Created="2017-09-15 21:40:47Z">
+      <Issue>
+       <Item>BoostTestShared</Item>
+      </Issue>
+      <Notes>
+       <User Name="bemcmorr">
+        <Note Id="0" />
+       </User>
+      </Notes>
+     </Message>
+    </Messages>
+   </Namespace>
+   <Namespace Name="JobManagement">
+    <Messages>
+     <Message TypeName="DeclareTypesInMicrosoftOrSystemNamespace" Category="Microsoft.MSInternal" CheckId="CA904" Status="Excluded" Created="2017-09-15 21:40:47Z">
+      <Issue>
+       <Item>JobManagement</Item>
+      </Issue>
+      <Notes>
+       <User Name="bemcmorr">
+        <Note Id="0" />
+       </User>
+      </Notes>
+     </Message>
+    </Messages>
+   </Namespace>
+   <Namespace Name="VisualStudioAdapter">
+    <Messages>
+     <Message TypeName="DeclareTypesInMicrosoftOrSystemNamespace" Category="Microsoft.MSInternal" CheckId="CA904" Status="Excluded" Created="2017-09-15 21:40:47Z">
+      <Issue>
+       <Item>VisualStudioAdapter</Item>
+      </Issue>
+      <Notes>
+       <User Name="bemcmorr">
+        <Note Id="0" />
+       </User>
+      </Notes>
+     </Message>
+    </Messages>
+   </Namespace>
+  </Namespaces>
+  <Notes>
+   <User Name="bemcmorr">
+    <Note Id="0" Modified="2017-09-15 21:48:11Z">This occurrence is in the part of the project coming from open source, so Microsoft namespace would be inappropriate.</Note>
+    <Note Id="1" Modified="2017-09-15 22:07:46Z">In both cases the lower-cased strings are only output to the console and are not used for further comparison.</Note>
+   </User>
+  </Notes>
+  <Rules>
+   <Rule TypeName="ArrayFieldsShouldNotBeReadOnly" Category="Microsoft.Security" CheckId="CA2105">
+    <Resolution Name="Default">Either replace {0} with a strongly typed collection that cannot be changed, or replace the public field with a method that returns a clone of a private array.</Resolution>
+   </Rule>
+   <Rule TypeName="AvoidTypesThatRequireJitCompilationInPrecompiledAssemblies" Category="Microsoft.MSInternal" CheckId="CA908">
+    <Resolution Name="Implementation">Replace the generic type {0} in the implementation of method {1} with a type that does not require JIT compilation at runtime for precompiled assemblies. If this is not an precompiled assembly this message should be suppressed or this rule should be disabled.</Resolution>
+    <Resolution Name="Signature">Replace the generic type {0} exposed by {1} with a type that does not require JIT compilation at runtime for precompiled assemblies. If this is not an precompiled assembly this message should be suppressed or this rule should be disabled.</Resolution>
+   </Rule>
+   <Rule TypeName="DeclareTypesInMicrosoftOrSystemNamespace" Category="Microsoft.MSInternal" CheckId="CA904">
+    <Resolution Name="Default">Redefine the types in namespace '{0}' in the Microsoft or System namespace. Public types that will never ship externally can be defined in the MS namespace. Consider disabling this rule when analyzing code that does not ship externally.</Resolution>
+   </Rule>
+   <Rule TypeName="DoNotDeclareReadOnlyMutableReferenceTypes" Category="Microsoft.Security" CheckId="CA2104">
+    <Resolution Name="Default">Remove the read-only designation from {0} or change the field to one that is an immutable reference type. If the reference type {1} is, in fact, immutable, exclude this message.</Resolution>
+   </Rule>
+   <Rule TypeName="NormalizeStringsToUppercase" Category="Microsoft.Globalization" CheckId="CA1308">
+    <Resolution Name="ToUpperInvariant">In method {0}, replace the call to {1} with String.ToUpperInvariant().</Resolution>
+   </Rule>
+   <Rule TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305">
+    <Resolution Name="IFormatProviderAlternate">Because the behavior of {0} could vary based on the current user's locale settings, replace this call in {1} with a call to {2}. If the result of {2} will be based on input from the user, specify {3} as the 'IFormatProvider' parameter. Otherwise, if the result will based on input stored and accessed by software, such as when it is loaded from disk or from a database, specify {4}.</Resolution>
+    <Resolution Name="IFormatProviderAlternateString">Because the behavior of {0} could vary based on the current user's locale settings, replace this call in {1} with a call to {2}. If the result of {2} will be displayed to the user, specify {3} as the 'IFormatProvider' parameter. Otherwise, if the result will be stored and accessed by software, such as when it is persisted to disk or to a database, specify {4}.</Resolution>
+   </Rule>
+   <Rule TypeName="UseXmlSecureResolver" Category="Microsoft.Security.Xml" CheckId="CA3053">
+    <Resolution Name="XmlReaderCreateInsecureXmlResolver">{0} instantiates an XmlReader instance by calling {1} and provided an XmlReaderSettings instance with an insecure XmlResolver property value. This usage is potentially unsafe as untrusted external resources may be resolved during read operations. Provide a XmlReaderSettings instance and set the XmlResolver property to null or an instance of XmlSecureResolver.</Resolution>
+    <Resolution Name="XmlReaderCreateWrongOverload">{0} instantiates an XmlReader instance by calling {1}, an overload which does not accept an explicit XmlReaderSettings argument. This usage is potentially unsafe as untrusted external resources may be resolved during read operations. Provide a XmlReaderSettings instance and set the XmlResolver property to null or an instance of XmlSecureResolver.</Resolution>
+   </Rule>
+  </Rules>
+ </FxCopReport>
+</FxCopProject>
