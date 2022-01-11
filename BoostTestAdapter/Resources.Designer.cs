@@ -115,7 +115,7 @@ namespace BoostTestAdapter {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Could not locate debug symbols for &apos;{0}&apos;. To make use of &apos;--list_content&apos; discovery, ensure that debug symbols are available or make use of &apos;&lt;ForceListContent&gt;&apos; via a .runsettings file..
+        ///   Looks up a localized string similar to Could not locate symbols for &apos;{0}&apos;. To make use of &apos;--list_content&apos; discovery, ensure that symbols are available or make use of &apos;&lt;ForceListContent&gt;&apos; via a .runsettings file..
         /// </summary>
         internal static string CouldNotLocateDebugSymbols {
             get {

@@ -33,10 +33,22 @@ namespace BoostTestAdapter.Discoverers
         /// <param name="source">The source test module which contains the discovered tests</param>
         /// <param name="sink">The ITestCaseDiscoverySink which will have tests registered with</param>
         public VSDiscoveryVisitor(string source, ITestCaseDiscoverySink sink)
+            : this(source, string.Empty, sink)
+        {
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="source">The source test module which contains the discovered tests</param>
+        /// <param name="version">The source test module Boost.Test version</param>
+        /// <param name="sink">The ITestCaseDiscoverySink which will have tests registered with</param>
+        public VSDiscoveryVisitor(string source, string version, ITestCaseDiscoverySink sink)
         {
             Code.Require(sink, "sink");
 
             this.Source = source;
+            this.Version = version;
             this.DiscoverySink = sink;
             this.OutputLog = true;
         }
@@ -45,6 +57,11 @@ namespace BoostTestAdapter.Discoverers
         /// The test module source file path
         /// </summary>
         public string Source { get; private set; }
+
+        /// <summary>
+        /// The test module version
+        /// </summary>
+        public string Version { get; private set; }
 
         /// <summary>
         /// Whether the module should output to the logger regarding relative paths
@@ -68,7 +85,7 @@ namespace BoostTestAdapter.Discoverers
                 {
                     // NOTE Since we have asserted that the suite is a BOOST_DATA_TEST_CASE,
                     //      all child instances are to be of type TestCase
-                    
+
                     var displayName = testSuite.Name + '/' + child.Name;
                     Visit((TestCase)child, displayName);
                 }
@@ -155,6 +172,12 @@ namespace BoostTestAdapter.Discoverers
                 // Test cases inherit the labels of parent test units
                 // Reference: http://www.boost.org/doc/libs/1_60_0/libs/test/doc/html/boost_test/tests_organization/tests_grouping.html
                 unit = unit.Parent;
+            }
+
+            // Record Boost version if available
+            if (!string.IsNullOrEmpty(this.Version))
+            {
+                test.SetPropertyValue(VSTestModel.VersionProperty, this.Version);
             }
 
             return test;

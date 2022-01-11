@@ -66,8 +66,8 @@ namespace BoostTestAdapter
         public BoostTestExecutor()
         {
             _testRunnerFactory = new DefaultBoostTestRunnerFactory();
-            _boostTestDiscovererFactory = new BoostTestDiscovererFactory(_testRunnerFactory);
             _packageServiceFactory = new DefaultBoostTestPackageServiceFactory();
+            _boostTestDiscovererFactory = new BoostTestDiscovererFactory(_testRunnerFactory, _packageServiceFactory);
 
             _cancelled = false;
         }

@@ -7,49 +7,59 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 using BoostTestAdapter.Discoverers;
 using BoostTestAdapter.Boost.Runner;
 using BoostTestAdapter.Settings;
+using BoostTestAdapter.Utility.VisualStudio;
 
 namespace BoostTestAdapter
 {
     class BoostTestDiscovererFactory : IBoostTestDiscovererFactory
     {
-        #region Constants
-
-        /// <summary>
-        /// Default 'ForceListContent' filename pattern. Such filenames are assumed to be valid Boost.Test modules by default.
-        /// </summary>
-        private static readonly Regex _forceListContentExtensionPattern = new Regex(@"test\.boost(?:d)?\.exe$", RegexOptions.IgnoreCase);
-        
-        #endregion 
-
         #region Constructors
 
         /// <summary>
         /// Default constructor. The default implementation of IBoostTestRunnerFactory is provided.
         /// </summary>
         public BoostTestDiscovererFactory()
-            : this(new DefaultBoostTestRunnerFactory())
+            : this(new DefaultBoostTestRunnerFactory(), new DefaultBoostTestPackageServiceFactory())
         {
+            // Assume that runners are to be cached for this discovery session
+            TestRunnerCaching = true;
         }
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="factory">A custom IBoostTestRunnerFactory implementation.</param>
-        public BoostTestDiscovererFactory(IBoostTestRunnerFactory factory)
+        /// <param name="packageServiceFactory">A custom implementation of IBoostTestPackageServiceFactory</param>
+        public BoostTestDiscovererFactory(IBoostTestRunnerFactory factory, IBoostTestPackageServiceFactory provider)
         {
             _factory = factory;
+            _boostTestPackage = provider;
         }
 
         #endregion
 
         #region Members
 
+        /// <summary>
+        /// Template Boost.Test Runner factory
+        /// </summary>
+        /// <remarks>This instance is to be treated as a template instance by which new instances are generated from.</remarks>
+        /// <seealso cref="GetTestRunnerFactory"/>
         private readonly IBoostTestRunnerFactory _factory;
+        private readonly IBoostTestPackageServiceFactory _boostTestPackage;
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Flag which enables/disables Boost.Test Runner caching for this discovery session
+        /// </summary>
+        public bool TestRunnerCaching { get; set; } = false;
 
         #endregion
 
@@ -77,7 +87,9 @@ namespace BoostTestAdapter
 
             // sources that support list-content parameter
             var listContentDiscovererSources = new List<string>();
-            
+
+            var factory = GetTestRunnerFactory();
+
             foreach (var source in sources)
             {
                 string extension = Path.GetExtension(source);
@@ -92,13 +104,13 @@ namespace BoostTestAdapter
                 }
 
                 // Skip modules which are not .exe
-                if (string.Compare(extension, BoostTestDiscoverer.ExeExtension, true) != 0)
+                if (string.Compare(extension, BoostTestDiscoverer.ExeExtension, StringComparison.OrdinalIgnoreCase) != 0)
                 {
                     continue;
                 }
-
+                
                 // Ensure that the source is a Boost.Test module if it supports '--list_content'
-                if (((settings.ForceListContent) || IsListContentSupported(source, settings)))
+                if (IsListContentSupported(factory, source, settings))
                 {
                     listContentDiscovererSources.Add(source);
                 }
@@ -116,7 +128,7 @@ namespace BoostTestAdapter
             if (listContentDiscovererSources.Any())
                 discoverers.Add(new FactoryResult()
                 {
-                    Discoverer = new ListContentDiscoverer(),
+                    Discoverer = new ListContentDiscoverer(_factory, _boostTestPackage),
                     Sources = listContentDiscovererSources
                 });
      
@@ -126,22 +138,30 @@ namespace BoostTestAdapter
         #endregion
 
         /// <summary>
+        /// Provides a Boost.Test runner factory for this discovery 'session'
+        /// </summary>
+        /// <returns>A Boost.Test runner factory or null if one cannot be generated</returns>
+        private IBoostTestRunnerFactory GetTestRunnerFactory()
+        {
+            if ((_factory != null) && TestRunnerCaching)
+            {
+                return new CachingBoostTestRunnerFactory(_factory);
+            }
+
+            return _factory;
+        }
+
+        /// <summary>
         /// Determines whether the provided source has --list_content capabilities
         /// </summary>
         /// <param name="source">The source to test</param>
         /// <param name="settings">Test adapter settings</param>
         /// <returns>true if the source has list content capabilities; false otherwise</returns>
-        private bool IsListContentSupported(string source, BoostTestAdapterSettings settings)
+        private static bool IsListContentSupported(IBoostTestRunnerFactory factory, string source, BoostTestAdapterSettings settings)
         {
-            BoostTestRunnerFactoryOptions options = new BoostTestRunnerFactoryOptions()
-            {
-                ExternalTestRunnerSettings = settings.ExternalTestRunner
-            };
+            var runner = factory.GetRunner(source, settings.TestRunnerFactoryOptions);
 
-            IBoostTestRunner runner = _factory.GetRunner(source, options);
-
-            // Convention over configuration. Assume test runners utilising such an extension pattern
-            return (runner != null) && (_forceListContentExtensionPattern.IsMatch(source) || runner.ListContentSupported);
+            return (runner != null) && (runner.Capabilities.ListContent);
         }
     }
 }

@@ -49,11 +49,16 @@ namespace BoostTestAdapter.Utility.VisualStudio
         }
 
         /// <summary>
+        /// Boost.Test Boost Version property
+        /// </summary>
+        public static TestProperty VersionProperty { get; } = TestProperty.Register("Boost.Test.Boost.Version", "Boost Version", typeof(string), typeof(VSTestModel));
+
+        /// <summary>
         /// Converts forward slashes in a file path to backward slashes.
         /// </summary>
         /// <param name="path_in"> The input path</param>
         /// <returns>The output path, modified with backward slashes </returns>
-       
+
         private static string ConvertSlashes(string path_in)
         {
             return path_in.Replace('/', '\\');

@@ -143,7 +143,7 @@
     <comment>{0} represents a test executable file name</comment>
   </data>
   <data name="CouldNotLocateDebugSymbols" xml:space="preserve">
-    <value>Could not locate debug symbols for '{0}'. To make use of '--list_content' discovery, ensure that debug symbols are available or make use of '&lt;ForceListContent&gt;' via a .runsettings file.</value>
+    <value>Could not locate symbols for '{0}'. To make use of '--list_content' discovery, ensure that symbols are available or make use of '&lt;ForceListContent&gt;' via a .runsettings file.</value>
     <comment>{0} represents a test executable file name</comment>
   </data>
   <data name="Debugging" xml:space="preserve">

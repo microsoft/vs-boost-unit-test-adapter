@@ -274,8 +274,6 @@ namespace BoostTestAdapterNunit
                 base(parent)
             {
                 this.Source = source;
-                this.ListContentSupported = false;
-
                 this.ExecutionArgs = new List<MockBoostTestRunnerExecutionArgs>();
             }
 
@@ -344,10 +342,9 @@ namespace BoostTestAdapterNunit
 
             public string Source { get; private set; }
 
-            public bool ListContentSupported { get; private set; }
+            public IBoostTestRunnerCapabilities Capabilities { get; } = new BoostTestRunnerCapabilities { ListContent = false, Version = false };
 
             #endregion IBoostTestRunner
-
 
             private void Copy(string embeddedResource, string path)
             {

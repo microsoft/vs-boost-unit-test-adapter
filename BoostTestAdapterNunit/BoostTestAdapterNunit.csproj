@@ -42,6 +42,8 @@
     <Compile Include="BoostTestRunnerCommandLineArgsTest.cs" />
     <Compile Include="BoostTestSettingsTest.cs" />
     <Compile Include="BoostTestTest.cs" />
+    <Compile Include="ByteUtilsTests.cs" />
+    <Compile Include="CachingBoostTestRunnerFactoryTest.cs" />
     <Compile Include="CommandEvaluatorTest.cs" />
     <Compile Include="CorrectReferencedAssembliesTest.cs" />
     <Compile Include="DefaultBoostTestRunnerFactoryTest.cs" />
@@ -103,6 +105,7 @@
     <EmbeddedResource Include="Resources\ListContentDOT\test_list_content.gv" />
     <EmbeddedResource Include="Resources\ListContentDOT\boost_data_test_case.gv" />
     <EmbeddedResource Include="Resources\ListContentDOT\special_characters.list.content.gv" />
+    <EmbeddedResource Include="Resources\Version\sample.version.stderr.log" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\ReportsLogs\AbortedTest\sample.test.log.xml" />
