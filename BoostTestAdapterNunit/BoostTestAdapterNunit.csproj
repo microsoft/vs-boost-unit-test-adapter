@@ -82,7 +82,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Log4NetConfigFile\BoostTestAdapter.dll.config" />
     <EmbeddedResource Include="Resources\ReportsLogs\MemoryLeakTest\sample.NoSourceFileAndLineNumbersAvailable.test.stdout.log" />
     <EmbeddedResource Include="Resources\ReportsLogs\MemoryLeakTest\sample.SourceFileAndLineNumbersAvailable.test.stdout.log" />
     <EmbeddedResource Include="Resources\ReportsLogs\OutputTest\sample.test.stderr.log" />
@@ -164,6 +163,9 @@
     <PackageReference Include="NUnit">
       <Version>2.6.4</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Log4NetConfigFile\BoostTestAdapter.TestAdapter.dll.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
