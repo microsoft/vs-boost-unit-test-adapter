@@ -117,7 +117,9 @@ namespace BoostTestAdapter.Discoverers
         private VSTestCase GenerateTestCase(TestCase testCase)
         {
             VSTestCase test = new VSTestCase(
-                testCase.FullyQualifiedName,
+                // Use a dot-separated scheme to adhere to Visual Studio's protocol
+                // to automatically allow for test suite hierarchical representation
+                testCase.GetFullyQualifiedName("."),
                 BoostTestExecutor.ExecutorUri,
                 this.Source
             );
@@ -156,6 +158,9 @@ namespace BoostTestAdapter.Discoverers
                 // Reference: http://www.boost.org/doc/libs/1_60_0/libs/test/doc/html/boost_test/tests_organization/tests_grouping.html
                 unit = unit.Parent;
             }
+
+            // Record (unmodified) test path as expected by Boost.Test
+            test.SetBoostTestPath(testCase.FullyQualifiedName);
 
             return test;
         }

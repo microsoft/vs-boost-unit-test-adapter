@@ -94,7 +94,7 @@ namespace BoostTestAdapterNunit
 
             Assert.That(test.Source, Is.EqualTo(source));
             Assert.That(test.ExecutorUri, Is.EqualTo(new Uri(BoostTestExecutor.ExecutorUriString)));
-            Assert.That(test.FullyQualifiedName, Is.EqualTo(expected.FullyQualifiedName));
+            Assert.That(test.FullyQualifiedName, Is.EqualTo(expected.GetFullyQualifiedName(".")));
 
             if (expected.Source != null)
             {

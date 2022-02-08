@@ -455,33 +455,20 @@ namespace BoostTestAdapterNunit
         /// </summary>
         /// <param name="fullyQualifiedName">The fully qualified name of the test case</param>
         /// <param name="source">The test case source</param>
+        /// <param name="enabled">Flag determining if the Boost.Test test case is enabled or not</param>
         /// <returns>A Visual Studio TestCase intended for BoostTestExecutor execution</returns>
-        private VSTestCase CreateTestCase(string fullyQualifiedName, string source)
+        private VSTestCase CreateTestCase(string fullyQualifiedName, string source, bool enabled = true)
         {
-            VSTestCase test = new VSTestCase(fullyQualifiedName, BoostTestExecutor.ExecutorUri, source);
-
             var fullyQualifiedNameBuilder = QualifiedNameBuilder.FromString(fullyQualifiedName);
+
+            VSTestCase test = new VSTestCase(fullyQualifiedNameBuilder.ToString("."), BoostTestExecutor.ExecutorUri, source);
 
             test.DisplayName = fullyQualifiedNameBuilder.Peek();
 
             test.Traits.Add(VSTestModel.TestSuiteTrait, fullyQualifiedNameBuilder.Pop().ToString());
-            test.Traits.Add(VSTestModel.StatusTrait, VSTestModel.TestEnabled);
+            test.Traits.Add(VSTestModel.StatusTrait, (enabled ? VSTestModel.TestEnabled : VSTestModel.TestDisabled));
 
-            return test;
-        }
-        private VSTestCase CreateTestCase(string fullyQualifiedName, string source, bool Enabled)
-        {
-            VSTestCase test = new VSTestCase(fullyQualifiedName, BoostTestExecutor.ExecutorUri, source);
-
-            test.Traits.Add(VSTestModel.TestSuiteTrait, QualifiedNameBuilder.FromString(fullyQualifiedName).Pop().ToString());
-            if(Enabled)
-            {
-                test.Traits.Add(VSTestModel.StatusTrait, VSTestModel.TestEnabled);
-            }
-            else
-            {
-                test.Traits.Add(VSTestModel.StatusTrait, VSTestModel.TestDisabled);
-            }
+            test.SetBoostTestPath(fullyQualifiedName.ToString());
 
             return test;
         }
@@ -509,7 +496,9 @@ namespace BoostTestAdapterNunit
             Assert.That(result.Outcome, Is.EqualTo(TestOutcome.Passed));
 
             Assert.That(result.TestCase.Source, Is.EqualTo(DefaultSource));
-            Assert.That(result.TestCase.FullyQualifiedName, Is.EqualTo(DefaultTestCase));
+
+            var name = QualifiedNameBuilder.FromString(DefaultTestCase).ToString(".");
+            Assert.That(result.TestCase.FullyQualifiedName, Is.EqualTo(name));
         }
 
         private static TestResourceFactory CreateDefaultResourceFactory(string logFile, string reportFile)
@@ -849,7 +838,7 @@ namespace BoostTestAdapterNunit
                 this.FrameworkHandle
             );
 
-            List<string> testIdentifiers = testCases.Select(test => test.FullyQualifiedName).ToList();
+            List<string> testIdentifiers = testCases.Select(test => test.GetBoostTestPath()).ToList();
 
             foreach (IBoostTestRunner runner in this.RunnerFactory.ProvisionedRunners)
             {
@@ -1006,7 +995,6 @@ namespace BoostTestAdapterNunit
 
             string MySource = "MySource";
 
-
             this.TestCaseProvider = (string source) =>
             {
                 VSTestCase[] testCases = new VSTestCase[]
@@ -1023,7 +1011,6 @@ namespace BoostTestAdapterNunit
                 this.FrameworkHandle
             );
 
-           
             foreach (IBoostTestRunner runner in this.RunnerFactory.ProvisionedRunners)
             {
                 // One runner per source is provisioned for the available source
@@ -1042,7 +1029,6 @@ namespace BoostTestAdapterNunit
                 Assert.That(testRunner.ExecutionArgs[0].Arguments.Tests[0], Is.EqualTo("A/2"));
                 Assert.That(testRunner.ExecutionArgs[1].Arguments.Tests[0], Is.EqualTo("B/1"));
             }
-
         }
 
         /// <summary>

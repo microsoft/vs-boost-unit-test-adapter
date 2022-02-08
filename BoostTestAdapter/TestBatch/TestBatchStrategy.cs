@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using BoostTestAdapter.Boost.Runner;
 using BoostTestAdapter.Settings;
 using BoostTestAdapter.Utility;
-
 using VSTestCase = Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase;
 
 namespace BoostTestAdapter.TestBatch

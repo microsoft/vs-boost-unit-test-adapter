@@ -538,7 +538,7 @@ namespace BoostTestAdapter
                     return testRun.Tests.Select(test => {
                         var exception = new BoostTestResult();
                         
-                        exception.Unit = Boost.Test.TestUnit.FromFullyQualifiedName(test.FullyQualifiedName);
+                        exception.Unit = Boost.Test.TestUnit.FromFullyQualifiedName(test.GetBoostTestPath());
 
                         // NOTE Divide by 10 to compensate for duration calculation described in VSTestResult.AsVSTestResult(this Boost.Results.TestResult, VSTestCase)
                         exception.Duration = ((ulong)(end - start).Ticks) / 10;
@@ -559,7 +559,7 @@ namespace BoostTestAdapter
                 {
                     // Locate the test result associated to the current test
                     BoostTestResult result = null;
-                    return (results.TryGetValue(test.FullyQualifiedName, out result)) ? GenerateResult(test, result, start, end) : null;
+                    return (results.TryGetValue(test.GetBoostTestPath(), out result)) ? GenerateResult(test, result, start, end) : null;
                 }).
                 Where(result => (result != null));
         }
@@ -633,11 +633,11 @@ namespace BoostTestAdapter
         /// <returns>A suitable 'not-found' for the provided test case.</returns>
         private static string GetNotFoundErrorMessage(VSTestCase test)
         {
-            if (test.FullyQualifiedName.Contains(' '))
+            if (test.GetBoostTestPath().Contains(' '))
             {
                 return Resources.TestNameContainsSpaces;
             }
-            else if (test.FullyQualifiedName.Contains(','))
+            else if (test.GetBoostTestPath().Contains(','))
             {
                 return Resources.TestNameContainsCommas;
             }

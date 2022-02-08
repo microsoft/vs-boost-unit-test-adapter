@@ -8,7 +8,7 @@ using System.Linq;
 using BoostTestAdapter.Boost.Runner;
 using BoostTestAdapter.Settings;
 using BoostTestAdapter.Utility;
-
+using BoostTestAdapter.Utility.VisualStudio;
 using VSTestCase = Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase;
 
 namespace BoostTestAdapter.TestBatch
@@ -41,7 +41,7 @@ namespace BoostTestAdapter.TestBatch
                 foreach (VSTestCase test in source)
                 {
                     BoostTestRunnerCommandLineArgs args = BuildCommandLineArgs(runner.Source);
-                    args.Tests.Add(test.FullyQualifiedName);
+                    args.Tests.Add(test.GetBoostTestPath());
 
                     yield return new TestRun(runner, new VSTestCase[] { test }, args, this.Settings.TestRunnerSettings);
                 }

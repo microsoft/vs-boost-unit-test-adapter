@@ -120,6 +120,17 @@ namespace BoostTestAdapter.Boost.Test
         #endregion Properties
 
         /// <summary>
+        /// Identifies the fully qualified name of this TestUnit
+        /// </summary>
+        /// <param name="separator">Path component separator</param>
+        /// <returns>Fully qualified name of this TestUnit</returns>
+        /// <seealso cref="FullyQualifiedName"/>
+        public string GetFullyQualifiedName(string separator)
+        {
+            return FullyQualifiedNameBuilder.ToString(separator);
+        }
+
+        /// <summary>
         /// Adds a child to this TestUnit
         /// </summary>
         /// <param name="unit">The unit to add as a child</param>
