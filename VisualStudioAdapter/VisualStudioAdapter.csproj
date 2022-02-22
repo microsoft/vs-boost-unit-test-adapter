@@ -63,7 +63,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="17.0.0-preview-2-31221-277" />
     <PackageReference Include="Microsoft.VisualStudio.Workspace.VSIntegration" Version="17.0.5-preview-0001-g696a30d1cc" />
     <PackageReference Include="Microsoft.VisualStudio.Interop" Version="17.0.0-preview-2-31221-277" />
-    <PackageReference Include="Microsoft.VisualStudioEng.MicroBuild.Core" Version="0.4.1">
+    <PackageReference Include="Microsoft.VisualStudioEng.MicroBuild.Core" Version="1.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
