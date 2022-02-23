@@ -15,7 +15,8 @@
   
   <ItemGroup>
     <MergeManifest Include="$(OutputPath)\..\BoostTestPlugin\Microsoft.VisualStudio.VC.Ide.TestAdapterForBoostTest.json"
-                   SBOMFileLocation="$(ArtifactsDir)\drop\_manifest\spdx_2.2\manifest.spdx.json" />
+                   SBOMFileLocation="$(ArtifactsDir)\drop\_manifest\spdx_2.2\manifest.spdx.json"
+                   SBOMFileDestPath= "$(ArtifactsDir)\drop" />
   </ItemGroup>
 
   <Import Project="$(NuGetPackages)Microsoft.VisualStudioEng.MicroBuild.Core.1.0.0\build\Microsoft.VisualStudioEng.MicroBuild.Core.targets" /> 
