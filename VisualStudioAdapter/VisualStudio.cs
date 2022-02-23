@@ -3,7 +3,7 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-// This file has been modified by Microsoft on 8/2017.
+// This file has been modified by Microsoft on 2/2022.
 
 using EnvDTE80;
 using Microsoft.VisualStudio;
@@ -78,8 +78,6 @@ namespace VisualStudioAdapter
                 return null;
             }
 
-            List<IVsHierarchy> deferredHierarchies = new List<IVsHierarchy>();
-
             IVsHierarchy[] hierarchies = new IVsHierarchy[1];
             uint fetched;
             while (enumHierarchies.Next(1, hierarchies, out fetched) == VSConstants.S_OK && fetched > 0)
@@ -90,53 +88,10 @@ namespace VisualStudioAdapter
                     continue;
                 }
 
-                if (IsInDeferredState(hierarchy))
+                var debuggingProperties = GetDebugPropsIfMatching(hierarchy, binary);
+                if (debuggingProperties != null)
                 {
-                    deferredHierarchies.Add(hierarchy);
-                }
-                else
-                {
-                    var debuggingProperties = GetDebugPropsIfMatching(hierarchy, binary);
-                    if (debuggingProperties != null)
-                    {
-                        return debuggingProperties;
-                    }
-                }
-            }
-
-            // If binary was not found in loaded hierarchies, fall back to searching in deferred hierarchies.
-            if (deferredHierarchies.Count > 0)
-            {
-                var workspaceService = (IVsSolutionWorkspaceService)this._serviceProvider.GetService(typeof(SVsSolutionWorkspaceService));
-                var indexService = workspaceService.CurrentWorkspace.GetIndexWorkspaceService();
-                var solutionService = workspaceService.CurrentWorkspace.GetService<ISolutionService>();
-
-                var solutionPath = workspaceService.SolutionFile;
-                var solutionConfig = (SolutionConfiguration2)this._dte.Solution.SolutionBuild.ActiveConfiguration;
-                var solutionDir = Path.GetDirectoryName(solutionPath);
-                var solutionContext = $"{solutionConfig.Name}|{solutionConfig.PlatformName}";
-
-                foreach (var hierarchy in deferredHierarchies)
-                {
-                    var projectPath = GetProjectPath(hierarchy);
-                    if (projectPath == null)
-                    {
-                        continue;
-                    }
-
-                    var isMatch = await ThreadHelper.JoinableTaskFactory.RunAsync(async delegate
-                    {
-                        var projectContext = await solutionService.GetProjectConfigurationAsync(solutionPath, projectPath, solutionContext);
-                        var outputs = await indexService.GetFileReferencesAsync(projectPath, refreshOption: true, context: projectContext,
-                            referenceTypes: (int)FileReferenceInfoType.Output);
-                        return outputs.Select(f => workspaceService.CurrentWorkspace.MakeRooted(f.Path)).Contains(binary);
-                    });
-
-                    if (isMatch)
-                    {
-                        var loadedProject = EnsureProjectIsLoaded(hierarchy, vsSolution);
-                        return GetDebugPropsIfMatching(loadedProject, binary);
-                    }
+                    return debuggingProperties;
                 }
             }
 
@@ -144,52 +99,6 @@ namespace VisualStudioAdapter
         }
 
         #endregion IVisualStudio
-
-        private static bool IsInDeferredState(IVsHierarchy hierarchy)
-        {
-            object deferred;
-            var hr = hierarchy.GetProperty((uint)VSConstants.VSITEMID.Root, (int)__VSHPROPID9.VSHPROPID_IsDeferred, out deferred);
-            if (hr != VSConstants.S_OK)
-            {
-                return false;
-            }
-            return (bool)deferred;
-        }
-
-        private static string GetProjectPath(IVsHierarchy hierarchy)
-        {
-            string name;
-            var hr = hierarchy.GetCanonicalName((uint)VSConstants.VSITEMID.Root, out name);
-            if (hr != VSConstants.S_OK)
-            {
-                return null;
-            }
-            return name;
-        }
-
-        private static IVsHierarchy EnsureProjectIsLoaded(IVsHierarchy hierarchy, IVsSolution vsSolution)
-        {
-            Guid projectGuid;
-            var hr = hierarchy.GetGuidProperty((uint)VSConstants.VSITEMID.Root, (int)__VSHPROPID.VSHPROPID_ProjectIDGuid, out projectGuid);
-            if (hr != VSConstants.S_OK)
-            {
-                return null;
-            }
-
-            hr = ((IVsSolution4)vsSolution).EnsureProjectIsLoaded(projectGuid, (uint)__VSBSLFLAGS.VSBSLFLAGS_None);
-            if (hr != VSConstants.S_OK)
-            {
-                return null;
-            }
-
-            IVsHierarchy loadedProject;
-            hr = vsSolution.GetProjectOfGuid(projectGuid, out loadedProject);
-            if (hr != VSConstants.S_OK)
-            {
-                return null;
-            }
-            return loadedProject;
-        }
 
         private static DebuggingProperties GetDebugPropsIfMatching(IVsHierarchy hierarchy, string binary)
         {
