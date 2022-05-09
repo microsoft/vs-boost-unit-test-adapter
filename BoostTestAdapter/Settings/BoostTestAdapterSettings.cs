@@ -40,7 +40,7 @@ namespace BoostTestAdapter.Settings
 
             this.LogLevel = LogLevel.TestSuite;
             
-            this.CatchSystemErrors = true;
+            this.CatchSystemErrors = null;
 
             this.DetectFloatingPointExceptions = false;
 
@@ -107,8 +107,8 @@ namespace BoostTestAdapter.Settings
         /// <summary>
         /// Set to 'true'|'1' to enable Boost Test's catch_system_errors.
         /// </summary>
-        [DefaultValue(true)]
-        public bool CatchSystemErrors
+        [DefaultValue(null)]
+        public bool? CatchSystemErrors
         {
             get
             {
