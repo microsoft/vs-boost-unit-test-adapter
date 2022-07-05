@@ -156,7 +156,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FakeItEasy">
-      <Version>1.13.1</Version>
+      <Version>7.3.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="15.3.0" />
     <PackageReference Include="NUnit">
