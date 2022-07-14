@@ -226,6 +226,9 @@
     <SuppressFromVsix Include="MessagePack.Annotations.dll" />
     <SuppressFromVsix Include="MessagePack.dll" />
     <SuppressFromVsix Include="Microsoft.VisualStudio.Interop.dll" />
+    <SuppressFromVsix Include="Microsoft.VisualStudio.RpcContracts.dll" />
+    <SuppressFromVsix Include="Microsoft.VisualStudio.Workspace.dll" />
+    <SuppressFromVsix Include="Microsoft.VisualStudio.Workspace.Extensions.dll" />
   </ItemGroup>
   <Target Name="SignThirdPartyFiles" BeforeTargets="GetVsixSourceItems" Condition="'$(RealSign)' == 'True'">
     <SignFiles Files="@(PublishThirdPartyFilesToSign)" Type="$(SignType)" BinariesDirectory="$(OutDir)" IntermediatesDirectory="$(IntermediateOutputPath)" Condition=" '@(PublishThirdPartyFilesToSign)' != '' " />
