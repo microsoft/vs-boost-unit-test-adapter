@@ -15,13 +15,13 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Antlr4.Runtime" Version="4.6.6" />
+    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.11.1" />
     <PackageReference Include="log4net" Version="2.0.14" />
     <PackageReference Include="Microsoft.VisualStudioEng.MicroBuild.Core" Version="1.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <FilesToSign Include="$(OutDir)\Antlr4.Runtime.dll" Condition="'$(RealSign)' == 'True'">
+    <FilesToSign Include="$(OutDir)\Antlr4.Runtime.Standard.dll" Condition="'$(RealSign)' == 'True'">
       <Authenticode>3PartySHA2</Authenticode>
     </FilesToSign>
     <FilesToSign Include="$(OutDir)\log4net.dll" Condition="'$(RealSign)' == 'True'">

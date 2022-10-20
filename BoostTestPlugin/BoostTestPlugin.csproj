@@ -79,7 +79,7 @@
     <DeployExtension>False</DeployExtension>
   </PropertyGroup>
   <ItemGroup Condition="'$(RealSign)' == 'True'">
-    <PublishThirdPartyFilesToSign Include="$(OutDir)\Antlr4.Runtime.dll">
+    <PublishThirdPartyFilesToSign Include="$(OutDir)\Antlr4.Runtime.Standard.dll">
       <Authenticode>3PartySHA2</Authenticode>
     </PublishThirdPartyFilesToSign>
     <PublishThirdPartyFilesToSign Include="$(OutDir)\log4net.dll">
