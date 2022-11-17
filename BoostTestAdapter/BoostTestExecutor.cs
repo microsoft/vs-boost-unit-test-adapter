@@ -217,7 +217,7 @@ namespace BoostTestAdapter
                         // Batch tests into grouped runs based by source so that we avoid reloading symbols per test run
                         // Batching by source since this overload is called when 'Run All...' or equivalent is triggered
                         // NOTE For code-coverage speed is given preference over adapter responsiveness.
-                        TestBatch.Strategy strategy = ((runContext.IsDataCollectionEnabled) ? TestBatch.Strategy.Source : settings.TestBatchStrategy);
+                        Strategy strategy = ((runContext.IsDataCollectionEnabled) ? Strategy.Source : settings.TestBatchStrategy);
 
                         ITestBatchingStrategy batchStrategy = GetBatchStrategy(strategy, settings);
                         if (batchStrategy == null)
@@ -267,7 +267,7 @@ namespace BoostTestAdapter
             //      multiple test name specification for tests which reside in the same test suite
             //
             // NOTE For code-coverage speed is given preference over adapter responsiveness.
-            TestBatch.Strategy strategy = ((runContext.IsDataCollectionEnabled) ? TestBatch.Strategy.TestSuite : settings.TestBatchStrategy);
+            TestBatch.Strategy strategy = ((runContext.IsDataCollectionEnabled) ? Strategy.One : settings.TestBatchStrategy);
             // Source strategy is invalid in such context since explicit tests are chosen. TestSuite is used instead.
             if (strategy == Strategy.Source)
             {
@@ -317,9 +317,10 @@ namespace BoostTestAdapter
 
             switch (strategy)
             {
-                case Strategy.Source: return new SourceTestBatchStrategy(this._testRunnerFactory, settings, argsBuilder);
-                case Strategy.TestSuite: return new TestSuiteTestBatchStrategy(this._testRunnerFactory, settings, argsBuilder);
-                case Strategy.TestCase: return new IndividualTestBatchStrategy(this._testRunnerFactory, settings, argsBuilder);
+                case Strategy.Source: return new SourceTestBatchStrategy(_testRunnerFactory, settings, argsBuilder);
+                case Strategy.TestSuite: return new TestSuiteTestBatchStrategy(_testRunnerFactory, settings, argsBuilder);
+                case Strategy.TestCase: return new IndividualTestBatchStrategy(_testRunnerFactory, settings, argsBuilder);
+                case Strategy.One: return new OneShotTestBatchStrategy(_testRunnerFactory, settings, argsBuilder);
             }
 
             return null;
@@ -467,7 +468,7 @@ namespace BoostTestAdapter
             
             args.StandardOutFile = ((settings.EnableStdOutRedirection) ? TestPathGenerator.Generate(source, FileExtensions.StdOutFile) : null);
             args.StandardErrorFile = ((settings.EnableStdErrRedirection) ? TestPathGenerator.Generate(source, FileExtensions.StdErrFile) : null);
-
+            
             return args;
         }
         

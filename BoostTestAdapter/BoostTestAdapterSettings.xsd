@@ -61,6 +61,7 @@
       <xsd:enumeration value="Source" />
       <xsd:enumeration value="TestSuite" />
       <xsd:enumeration value="TestCase" />
+      <xsd:enumeration value="One" />
     </xsd:restriction>
   </xsd:simpleType>
 
