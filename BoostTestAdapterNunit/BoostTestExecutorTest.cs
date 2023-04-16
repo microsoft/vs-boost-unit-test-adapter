@@ -20,10 +20,11 @@ using FakeItEasy;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using NUnit.Framework;
-using TimeoutException = BoostTestAdapter.Boost.Runner.TimeoutException;
 using VSTestCase = Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase;
 using VSTestResult = Microsoft.VisualStudio.TestPlatform.ObjectModel.TestResult;
 using BoostTestAdapter.Utility.ExecutionContext;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace BoostTestAdapterNunit
 {
@@ -49,6 +50,7 @@ namespace BoostTestAdapterNunit
             this.FrameworkHandle = new StubFrameworkHandle();
 
             this.RunContext = new DefaultTestContext();
+            this.RunContext.RegisterSettingProvider(BoostTestAdapterSettings.XmlRootName, new BoostTestAdapterSettingsProvider());
 
             this.TestCaseProvider = GetTests;
 
@@ -67,11 +69,6 @@ namespace BoostTestAdapterNunit
         /// Test case fully qualified name which should generate a timeout exception.
         /// </summary>
         private const string TimeoutTestCase = "Timeout";
-
-        /// <summary>
-        /// Timeout threshold.
-        /// </summary>
-        private const int Timeout = 10;
 
         /// <summary>
         /// Default test case fully qualified name.
@@ -235,7 +232,10 @@ namespace BoostTestAdapterNunit
                         {
                             IBoostTestRunner timeoutRunner = A.Fake<IBoostTestRunner>();
                             A.CallTo(() => timeoutRunner.Source).Returns(identifier);
-                            A.CallTo(() => timeoutRunner.Execute(A<BoostTestRunnerCommandLineArgs>._, A<BoostTestRunnerSettings>._, A<IProcessExecutionContext>._)).Throws(new TimeoutException(Timeout));
+                            A.CallTo(() => timeoutRunner.ExecuteAsync(A<BoostTestRunnerCommandLineArgs>._, A<BoostTestRunnerSettings>._, A<IProcessExecutionContext>._, A<CancellationToken>._))
+                                .ReturnsLazily((BoostTestRunnerCommandLineArgs args, BoostTestRunnerSettings settings, IProcessExecutionContext context, CancellationToken token) => {
+                                    return Task.Delay(int.MaxValue, token).ContinueWith((Task) => { return 0; });
+                                });
 
                             return Provision(timeoutRunner);
                         }
@@ -294,7 +294,7 @@ namespace BoostTestAdapterNunit
 
             #region IBoostTestRunner
             
-            public int Execute(BoostTestRunnerCommandLineArgs args, BoostTestRunnerSettings settings, IProcessExecutionContext context)
+            public Task<int> ExecuteAsync(BoostTestRunnerCommandLineArgs args, BoostTestRunnerSettings settings, IProcessExecutionContext context, CancellationToken token)
             {
                 this.ExecutionArgs.Add(new MockBoostTestRunnerExecutionArgs()
                 {
@@ -339,7 +339,7 @@ namespace BoostTestAdapterNunit
                     Copy(resources.LogFilePath, args.LogFile);
                 }
 
-                return 0;
+                return Task.FromResult(0);
             }
 
             public string Source { get; private set; }
@@ -401,7 +401,7 @@ namespace BoostTestAdapterNunit
 
             public void RecordEnd(VSTestCase testCase, TestOutcome outcome)
             {
-                throw new NotImplementedException();
+                // NO-OP
             }
 
             public void RecordResult(VSTestResult testResult)
@@ -411,7 +411,7 @@ namespace BoostTestAdapterNunit
 
             public void RecordStart(VSTestCase testCase)
             {
-                throw new NotImplementedException();
+                // NO-OP
             }
 
             #endregion ITestExecutionRecorder
@@ -615,7 +615,6 @@ namespace BoostTestAdapterNunit
         [Test]
         public void RunTestsWithTestSettings()
         {
-            this.RunContext.RegisterSettingProvider(BoostTestAdapterSettings.XmlRootName, new BoostTestAdapterSettingsProvider());
             this.RunContext.LoadEmbeddedSettings("BoostTestAdapterNunit.Resources.Settings.sample.runsettings");
 
             this.Executor.RunTests(
@@ -676,6 +675,10 @@ namespace BoostTestAdapterNunit
         [Test]
         public void TestTimeoutException()
         {
+            const int timeout = 1;
+
+            this.RunContext.LoadSettings($"<RunSettings><BoostTest><ExecutionTimeoutMilliseconds>{timeout}</ExecutionTimeoutMilliseconds></BoostTest></RunSettings>");
+
             this.Executor.RunTests(
                 new VSTestCase[] { CreateTestCase("test", TimeoutTestCase) },
                 this.RunContext,
@@ -687,7 +690,7 @@ namespace BoostTestAdapterNunit
             VSTestResult result = this.FrameworkHandle.Results.First();
 
             Assert.That(result.Outcome, Is.EqualTo(TestOutcome.Failed));
-            Assert.That(result.Duration, Is.EqualTo(TimeSpan.FromMilliseconds(Timeout)));
+            Assert.That(result.Duration, Is.EqualTo(TimeSpan.FromMilliseconds(timeout)));
             Assert.That(result.ErrorMessage.ToLowerInvariant().Contains("timeout"), Is.True);
         }
 
@@ -834,7 +837,6 @@ namespace BoostTestAdapterNunit
         [Test]
         public void TestIndividualTestExecutionRuns()
         {
-            this.RunContext.RegisterSettingProvider(BoostTestAdapterSettings.XmlRootName, new BoostTestAdapterSettingsProvider());
             this.RunContext.LoadSettings("<RunSettings><BoostTest><TestBatchStrategy>TestCase</TestBatchStrategy></BoostTest></RunSettings>");
 
             VSTestCase[] testCases = new VSTestCase[]
@@ -885,7 +887,6 @@ namespace BoostTestAdapterNunit
         [Test]
         public void TestModuleBatchedRuns()
         {
-            this.RunContext.RegisterSettingProvider(BoostTestAdapterSettings.XmlRootName, new BoostTestAdapterSettingsProvider());
             this.RunContext.LoadSettings("<RunSettings><BoostTest><TestBatchStrategy>Source</TestBatchStrategy></BoostTest></RunSettings>");
 
             string OtherSource = "OtherSource";
@@ -957,7 +958,6 @@ namespace BoostTestAdapterNunit
         [Test]
         public void TestTestSuiteBatchedRuns()
         {
-            this.RunContext.RegisterSettingProvider(BoostTestAdapterSettings.XmlRootName, new BoostTestAdapterSettingsProvider());
             this.RunContext.LoadSettings("<RunSettings><BoostTest><TestBatchStrategy>TestSuite</TestBatchStrategy></BoostTest></RunSettings>");
 
             string otherSource = "OtherSource";
@@ -1001,7 +1001,6 @@ namespace BoostTestAdapterNunit
         [Test]
         public void TestDisabledTestsRunAll()
         {
-            this.RunContext.RegisterSettingProvider(BoostTestAdapterSettings.XmlRootName, new BoostTestAdapterSettingsProvider());
             this.RunContext.LoadSettings("<RunSettings><BoostTest><RunDisabledTests>false</RunDisabledTests></BoostTest></RunSettings>");
 
             string MySource = "MySource";
@@ -1054,7 +1053,6 @@ namespace BoostTestAdapterNunit
         [Test]
         public void TestDisabledTestsRunAllSettings()
         {
-            this.RunContext.RegisterSettingProvider(BoostTestAdapterSettings.XmlRootName, new BoostTestAdapterSettingsProvider());
             this.RunContext.LoadSettings("<RunSettings><BoostTest><RunDisabledTests>true</RunDisabledTests></BoostTest></RunSettings>");
 
             string MySource = "MySource";
@@ -1112,8 +1110,6 @@ namespace BoostTestAdapterNunit
         [Test]
         public void TestDisabledTestsRunSelectedTest()
         {
-            this.RunContext.RegisterSettingProvider(BoostTestAdapterSettings.XmlRootName, new BoostTestAdapterSettingsProvider());
-
             string MySource = "MySource";
 
             this.Executor.RunTests(
@@ -1153,7 +1149,6 @@ namespace BoostTestAdapterNunit
         [Test]
         public void DisableStdOutErrRedirection()
         {
-            this.RunContext.RegisterSettingProvider(BoostTestAdapterSettings.XmlRootName, new BoostTestAdapterSettingsProvider());
             this.RunContext.LoadSettings("<RunSettings><BoostTest><EnableStdOutRedirection>false</EnableStdOutRedirection><EnableStdErrRedirection>false</EnableStdErrRedirection></BoostTest></RunSettings>");
 
             this.Executor.RunTests(

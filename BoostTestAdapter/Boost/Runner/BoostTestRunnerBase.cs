@@ -5,14 +5,16 @@
 
 // This file has been modified by Microsoft on 8/2017.
 
+using BoostTestAdapter.Utility;
+using BoostTestAdapter.Utility.ExecutionContext;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Management;
-using BoostTestAdapter.Utility;
-using System.ComponentModel;
-using BoostTestAdapter.Utility.ExecutionContext;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace BoostTestAdapter.Boost.Runner
 {
@@ -46,15 +48,48 @@ namespace BoostTestAdapter.Boost.Runner
 
         #region IBoostTestRunner
 
-        public virtual int Execute(BoostTestRunnerCommandLineArgs args, BoostTestRunnerSettings settings, IProcessExecutionContext executionContext)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        public Task<int> ExecuteAsync(BoostTestRunnerCommandLineArgs args, BoostTestRunnerSettings settings, IProcessExecutionContext executionContext, CancellationToken token)
         {
-            Utility.Code.Require(settings, "settings");
             Utility.Code.Require(executionContext, "executionContext");
 
-            using (Process process = executionContext.LaunchProcess(GetExecutionContextArgs(args, settings)))
+            var source = new TaskCompletionSource<int>();
+            var process = executionContext.LaunchProcess(GetExecutionContextArgs(args, settings));
+
+            process.Exited += (object obj, EventArgs ev) =>
             {
-                return MonitorProcess(process, settings.Timeout);
+                try
+                {
+                    source.TrySetResult(process.ExitCode);
+                }
+                catch (Exception ex)
+                {
+                    source.TrySetException(ex);
+                }
+            };
+
+            try
+            {
+                process.EnableRaisingEvents = true;
             }
+            catch (Exception ex)
+            {
+                source.TrySetException(ex);
+            }
+
+            token.Register(() => { source.TrySetCanceled(); });
+
+            return source.Task.ContinueWith((Task<int> result) =>
+            {
+                if (result.Status != TaskStatus.RanToCompletion)
+                {
+                    KillProcessIncludingChildren(process);
+                }
+
+                process.Dispose();
+
+                return result.Result;
+            });
         }
         
         public virtual string Source
@@ -119,39 +154,6 @@ namespace BoostTestAdapter.Boost.Runner
 
         #endregion IBoostTestRunner
 
-        /// <summary>
-        /// Monitors the provided process for the specified timeout.
-        /// </summary>
-        /// <param name="process">The process to monitor.</param>
-        /// <param name="timeout">The timeout threshold until the process and its children should be killed.</param>
-        /// <exception cref="TimeoutException">Thrown in case specified timeout threshold is exceeded.</exception>
-        private static int MonitorProcess(Process process, int timeout)
-        {
-            process.WaitForExit(timeout);
-
-            if (!process.HasExited)
-            {
-                KillProcessIncludingChildren(process);
-
-                throw new TimeoutException(timeout);
-            }
-
-            try
-            {
-                return process.ExitCode;
-            }
-            catch (InvalidOperationException)
-            {
-                // This is a common scenario when attempting to request the exit code
-                // of a process which is executed through the debugger. In such cases
-                // assume a successful exit scenario. Should this not be the case, the
-                // adapter will 'naturally' fail in other instances e.g. when attempting
-                // to read test reports.
-
-                return 0;
-            }
-        }
-        
         /// <summary>
         /// Kills a process identified by its pid and all its children processes
         /// </summary>

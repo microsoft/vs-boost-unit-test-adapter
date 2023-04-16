@@ -23,6 +23,8 @@ using NUnit.Framework;
 
 using VSTestCase = Microsoft.VisualStudio.TestPlatform.ObjectModel.TestCase;
 using BoostTestAdapter.Utility.ExecutionContext;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace BoostTestAdapterNunit
 {
@@ -80,14 +82,14 @@ namespace BoostTestAdapterNunit
             string output = null;
 
             A.CallTo(() => runner.ListContentSupported).Returns(true);
-            A.CallTo(() => runner.Execute(A<BoostTestRunnerCommandLineArgs>._, A<BoostTestRunnerSettings>._, A<IProcessExecutionContext>._)).Invokes((call) =>
+            A.CallTo(() => runner.ExecuteAsync(A<BoostTestRunnerCommandLineArgs>._, A<BoostTestRunnerSettings>._, A<IProcessExecutionContext>._, A<CancellationToken>._)).Invokes((call) =>
             {
                 BoostTestRunnerCommandLineArgs args = (BoostTestRunnerCommandLineArgs) call.Arguments.First();
                 if ((args.ListContent.HasValue) && (args.ListContent.Value == ListContentFormat.DOT))
                 {
                     output = TestHelper.CopyEmbeddedResourceToDirectory("BoostTestAdapterNunit.Resources.ListContentDOT.sample.8.list.content.gv", args.StandardErrorFile);
                 }             
-            }).Returns(0);
+            }).Returns(Task.FromResult(0));
 
             FakeBoostTestRunnerFactory factory = new FakeBoostTestRunnerFactory(runner);
             ListContentDiscoverer discoverer = new ListContentDiscoverer(factory, DummyBoostTestPackageServiceFactory.Default);
@@ -101,7 +103,7 @@ namespace BoostTestAdapterNunit
             Assert.That(factory.ProvisionedRunners.Count, Is.EqualTo(1));
             foreach (IBoostTestRunner provisioned in factory.ProvisionedRunners.Select(provision => provision.Item3))
             {
-                A.CallTo(() => provisioned.Execute(A<BoostTestRunnerCommandLineArgs>._, A<BoostTestRunnerSettings>._, A<IProcessExecutionContext>._)).
+                A.CallTo(() => provisioned.ExecuteAsync(A<BoostTestRunnerCommandLineArgs>._, A<BoostTestRunnerSettings>._, A<IProcessExecutionContext>._, A<CancellationToken>._)).
                     WhenArgumentsMatch((arguments) =>
                     {
                         BoostTestRunnerCommandLineArgs args = (BoostTestRunnerCommandLineArgs) arguments.First();
@@ -138,7 +140,7 @@ namespace BoostTestAdapterNunit
             IBoostTestRunner runner = A.Fake<IBoostTestRunner>();
                         
             A.CallTo(() => runner.ListContentSupported).Returns(true);
-            A.CallTo(() => runner.Execute(A<BoostTestRunnerCommandLineArgs>._, A<BoostTestRunnerSettings>._, A<IProcessExecutionContext>._)).Returns(-1073741515);
+            A.CallTo(() => runner.ExecuteAsync(A<BoostTestRunnerCommandLineArgs>._, A<BoostTestRunnerSettings>._, A<IProcessExecutionContext>._, A<CancellationToken>._)).Returns(Task.FromResult(-1073741515));
 
             FakeBoostTestRunnerFactory factory = new FakeBoostTestRunnerFactory(runner);
             ListContentDiscoverer discoverer = new ListContentDiscoverer(factory, DummyBoostTestPackageServiceFactory.Default);

@@ -3,12 +3,13 @@
 // (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-using System;
-using System.IO;
-using System.Globalization;
-using BoostTestAdapter.Utility.ExecutionContext;
 using BoostTestAdapter.Utility;
-
+using BoostTestAdapter.Utility.ExecutionContext;
+using System;
+using System.Globalization;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using static BoostTestAdapter.BoostTestExecutor;
 
 namespace BoostTestAdapter.Boost.Runner
@@ -43,7 +44,7 @@ namespace BoostTestAdapter.Boost.Runner
 
         public string Source => this.Runner.Source;
 
-        public int Execute(BoostTestRunnerCommandLineArgs args, BoostTestRunnerSettings settings, IProcessExecutionContext executionContext)
+        public async Task<int> ExecuteAsync(BoostTestRunnerCommandLineArgs args, BoostTestRunnerSettings settings, IProcessExecutionContext executionContext, CancellationToken token)
         {
             var fixedArgs = args;
 
@@ -55,7 +56,12 @@ namespace BoostTestAdapter.Boost.Runner
 
             using (var stderr = new TemporaryFile(IsStandardErrorFileDifferent(args, fixedArgs) ? fixedArgs.StandardErrorFile : null))
             {
-                int resultCode = this.Runner.Execute(fixedArgs, settings, executionContext);
+                var resultCode = await Runner.ExecuteAsync(fixedArgs, settings, executionContext, token);
+
+                if (token.IsCancellationRequested)
+                {
+                    return resultCode;
+                }
 
                 // Extract the report output to its intended location
                 string source = (fixedArgs == null) ? null : fixedArgs.StandardErrorFile;
@@ -115,7 +121,7 @@ namespace BoostTestAdapter.Boost.Runner
             args.Report = Sink.StandardError;
             if (string.IsNullOrEmpty(args.StandardErrorFile))
             {
-                args.StandardErrorFile = TestPathGenerator.Generate(this.Source, FileExtensions.StdErrFile);
+                args.StandardErrorFile = TestPathGenerator.Generate(Source, FileExtensions.StdErrFile);
             }
 
             return args;

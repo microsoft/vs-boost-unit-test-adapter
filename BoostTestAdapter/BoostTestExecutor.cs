@@ -31,7 +31,7 @@ namespace BoostTestAdapter
     /// Implementation of ITestExecutor interface for Boost Tests.
     /// </summary>
     [ExtensionUri(ExecutorUriString)]
-    public class BoostTestExecutor : ITestExecutor
+    public class BoostTestExecutor : ITestExecutor, IDisposable
     {
         #region Constants
 
@@ -68,8 +68,6 @@ namespace BoostTestAdapter
             _testRunnerFactory = new DefaultBoostTestRunnerFactory();
             _boostTestDiscovererFactory = new BoostTestDiscovererFactory(_testRunnerFactory);
             _packageServiceFactory = new DefaultBoostTestPackageServiceFactory();
-
-            _cancelled = false;
         }
 
         /// <summary>
@@ -83,8 +81,6 @@ namespace BoostTestAdapter
             _testRunnerFactory = testRunnerFactory;
             _boostTestDiscovererFactory = boostTestDiscovererFactory;
             _packageServiceFactory = packageServiceFactory;
-
-            _cancelled = false;
         }
 
         #endregion Constructors
@@ -94,7 +90,7 @@ namespace BoostTestAdapter
         /// <summary>
         /// Cancel flag
         /// </summary>
-        private volatile bool _cancelled;
+        private CancellationTokenSource _cancelled = null;
 
         /// <summary>
         /// Boost Test Discoverer Factory - provisions test discoverers
@@ -123,15 +119,16 @@ namespace BoostTestAdapter
             System.Diagnostics.Debugger.Launch();
 #endif
 
-            _cancelled = false;
+            _cancelled = new CancellationTokenSource();
             Logger.Initialize(logger);
         }
 
         /// <summary>
         /// Termination/Cleanup routine for running tests
         /// </summary>
-        private static void TearDown()
+        private void TearDown()
         {
+            _cancelled.Dispose();
             Logger.Shutdown();
         }
 
@@ -190,7 +187,7 @@ namespace BoostTestAdapter
 
             foreach (string source in sources)
             {
-                if (_cancelled)
+                if (_cancelled.IsCancellationRequested)
                 {
                     break;
                 }
@@ -294,7 +291,7 @@ namespace BoostTestAdapter
         /// </summary>
         public void Cancel()
         {
-            _cancelled = true;
+            _cancelled.Cancel();
         }
 
         #endregion ITestExecutor
@@ -341,7 +338,7 @@ namespace BoostTestAdapter
 
             foreach (TestRun batch in testBatches)
             {
-                if (_cancelled)
+                if (_cancelled.IsCancellationRequested)
                 {
                     break;
                 }
@@ -350,6 +347,11 @@ namespace BoostTestAdapter
 
                 try
                 {
+                    foreach (var test in batch.Tests)
+                    {
+                        frameworkHandle.RecordStart(test);
+                    }
+
                     Logger.Info(((runContext.IsBeingDebugged) ? Resources.Debugging : Resources.Executing), string.Join(", ", batch.Tests));
 
                     using (TemporaryFile report = new TemporaryFile(batch.Arguments.ReportFile))
@@ -372,9 +374,11 @@ namespace BoostTestAdapter
                             {
                                 Thread.Sleep(settings.PostTestDelay);
                             }
-
+                            
                             foreach (VSTestResult result in GenerateTestResults(batch, start, settings))
                             {
+                                frameworkHandle.RecordEnd(result.TestCase, result.Outcome);
+
                                 // Identify test result to Visual Studio Test framework
                                 frameworkHandle.RecordResult(result);
                             }
@@ -388,6 +392,7 @@ namespace BoostTestAdapter
                         VSTestResult testResult = GenerateTimeoutResult(testCase, ex);
                         testResult.StartTime = start;
 
+                        frameworkHandle.RecordEnd(testResult.TestCase, testResult.Outcome);
                         frameworkHandle.RecordResult(testResult);
                     }
                 }
@@ -405,13 +410,38 @@ namespace BoostTestAdapter
         /// <param name="runContext">The RunContext for this TestCase. Determines whether the test should be debugged or not.</param>
         /// <param name="frameworkHandle">The FrameworkHandle for this test execution instance.</param>
         /// <returns></returns>
-        private static bool ExecuteTests(TestRun run, IRunContext runContext, IFrameworkHandle frameworkHandle)
+        private bool ExecuteTests(TestRun run, IRunContext runContext, IFrameworkHandle frameworkHandle)
         {
             if (run.Runner != null)
             {
                 using (var context = CreateExecutionContext(runContext, frameworkHandle))
+                using (var cancel = new CancellationTokenSource())
                 {
-                    run.Execute(context);
+                    // Associate the test-batch local cancellation source to the global cancellation source
+                    // so that if the global source is canceled, the local source is also canceled
+                    _cancelled.Token.Register(cancel.Cancel);
+
+                    try
+                    {
+                        if (!run.ExecuteAsync(context, cancel.Token).Wait(run.Settings.Timeout))
+                        {
+                            cancel.Cancel();
+                            throw new Boost.Runner.TimeoutException(run.Settings.Timeout);
+                        }
+                    }
+                    catch (AggregateException)
+                    {
+                        // Suppress internal task exceptions or cancellations.
+                        //
+                        // This is a common scenario when attempting to request the exit code
+                        // of a process which is executed through the debugger. In such cases
+                        // assume a successful exit scenario. Should this not be the case, the
+                        // adapter will 'naturally' fail in other instances e.g. when attempting
+                        // to read test reports.
+                    }
+
+                    // This will return false in case the global cancellation source has been canceled
+                    return !cancel.IsCancellationRequested;
                 }
             }
             else
@@ -419,7 +449,7 @@ namespace BoostTestAdapter
                 Logger.Error(Resources.ExecutorNotFound, string.Join(", ", run.Tests));
             }
 
-            return run.Runner != null;
+            return false;
         }
 
         /// <summary>
@@ -664,5 +694,31 @@ namespace BoostTestAdapter
         }
 
         #endregion Helper methods
+
+        #region IDisposable Support
+
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _cancelled.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+        }
+
+        #endregion
     }
 }
