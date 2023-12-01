@@ -75,6 +75,10 @@
   <ItemGroup>
     <Compile Include="BoostTestDiscoverer.cs" />
     <Compile Include="Boost\Runner\BoostTest162Runner.cs" />
+    <Compile Include="Boost\Runner\BoostTestRunnerCapabilities.cs" />
+    <Compile Include="Boost\Runner\BoostTestRunnerCapabilityOverride.cs" />
+    <Compile Include="Boost\Runner\CachingBoostTestRunnerFactory.cs" />
+    <Compile Include="Boost\Runner\IBoostTestRunnerCapabilities.cs" />
     <Compile Include="Discoverers\BoostTestDiscovererUtility.cs" />
     <Compile Include="Discoverers\BoostTestDiscovererFactory.cs" />
     <Compile Include="BoostTestExecutor.cs" />
@@ -160,6 +164,7 @@
     <Compile Include="Utility\TemporaryFile.cs" />
     <Compile Include="Utility\TestPathGenerator.cs" />
     <Compile Include="Utility\TestRun.cs" />
+    <Compile Include="Utility\TimedScope.cs" />
     <Compile Include="Utility\VisualStudio\DefaultTestCaseDiscoverySink.cs" />
     <Compile Include="Utility\VisualStudio\VSTestModel.cs" />
     <Compile Include="Utility\XmlReaderHelper.cs" />

@@ -50,17 +50,24 @@ namespace BoostTestAdapter.Boost.Runner
 
         public override string Source
         {
-            get { return this._source; }
-        }
-
-        public override bool ListContentSupported
-        {
             get
             {
-                return (Settings.DiscoveryMethodType == DiscoveryMethodType.DiscoveryListContent);
+                return this._source;
             }
         }
 
+        public override IBoostTestRunnerCapabilities Capabilities
+        {
+            get
+            {
+                return new BoostTestRunnerCapabilities
+                {
+                    ListContent = (Settings.DiscoveryMethodType == DiscoveryMethodType.DiscoveryListContent),
+                    Version = false
+                };
+            }
+        }
+        
         #endregion IBoostTestRunner
 
         #region BoostTestRunnerBase

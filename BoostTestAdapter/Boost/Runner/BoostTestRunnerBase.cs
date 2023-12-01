@@ -34,14 +34,19 @@ namespace BoostTestAdapter.Boost.Runner
         }
 
         #endregion Constructors
-
+        
         #region Properties
 
         /// <summary>
-        /// Boost Test runner '.exe' file path.
+        /// Boost.Test runner '.exe' file path
         /// </summary>
         protected string TestRunnerExecutable { get; private set; }
 
+        /// <summary>
+        /// Caches Boost.Test runner capabilities
+        /// </summary>
+        private BoostTestRunnerCapabilities _capabilities = null;
+        
         #endregion Properties
 
         #region IBoostTestRunner
@@ -61,42 +66,22 @@ namespace BoostTestAdapter.Boost.Runner
         {
             get { return this.TestRunnerExecutable; }
         }
-
-        public virtual bool ListContentSupported
+        
+        public virtual IBoostTestRunnerCapabilities Capabilities
         {
             get
             {
-                bool supported = false;
-
-                // Try to locate the list_content function debug symbol. If this is not available, this implies that:
-                // - Debug symbols are not available for the requested source
-                // - Debug symbols are available but the source is not a Boost Unit Test version >= 3 module
-                try
+                if (_capabilities == null)
                 {
-                    // Search symbols on the TestRunner not on the source. Source could be .dll which may not contain list_content functionality.
-                    using (DebugHelper dbgHelp = new DebugHelper(this.TestRunnerExecutable))
-                    {
-
-                        supported =
-                               DebugHelper.FindImport(this.TestRunnerExecutable, "boost_unit_test_framework", StringComparison.OrdinalIgnoreCase) // Boost linked dynamically
-                            || dbgHelp.ContainsSymbol("boost::unit_test::runtime_config::LIST_CONTENT")         // Boost 1.60/1.61
-                            || dbgHelp.ContainsSymbol("boost::unit_test::runtime_config::btrt_list_content");   // Boost 1.64
-                    }
-                }
-                catch (Win32Exception ex)
-                {
-                    Logger.Exception(ex, Resources.CouldNotCreateDbgHelp, this.Source);
-                }
-                
-                if (!supported)
-                {
-                    Logger.Warn(Resources.CouldNotLocateDebugSymbols, this.TestRunnerExecutable);
+                    _capabilities = GetCapabilities();
                 }
 
-                return supported;
+                return _capabilities;
             }
         }
-
+        
+        #endregion IBoostTestRunner
+        
         /// <summary>
         /// Provides a ProcessExecutionContextArgs structure containing the necessary information to launch the test process.
         /// Aggregates the BoostTestRunnerCommandLineArgs structure with the command-line arguments specified at configuration stage.
@@ -116,8 +101,6 @@ namespace BoostTestAdapter.Boost.Runner
                 EnvironmentVariables = args.Environment
             };
         }
-
-        #endregion IBoostTestRunner
 
         /// <summary>
         /// Monitors the provided process for the specified timeout.
@@ -256,6 +239,72 @@ namespace BoostTestAdapter.Boost.Runner
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Acquires the Boost.Test runner's capabilities via debug symbol lookup
+        /// </summary>
+        /// <returns>The Boost.Test runner's capabilities</returns>
+        private BoostTestRunnerCapabilities GetCapabilities()
+        {
+            using (new Utility.TimedScope("Looking up '--list_content' and '--version' debug symbols"))
+            {
+                // Search symbols on the TestRunner not on the source. Source could be .dll which may not contain list_content functionality.
+                using (DebugHelper dbgHelp = CreateDebugHelper(this.TestRunnerExecutable))
+                {
+                    if (dbgHelp != null)
+                    {
+                        // Restrict symbol search to namespace scope to improve lookup speeds
+                        var symbols = dbgHelp.LookupSymbolNamesByPattern("boost::unit_test::runtime_config::*");
+
+                        // Try to locate the list_content function debug symbol. If this is not available, this implies that:
+                        // - Debug symbols are not available for the requested source
+                        // - Debug symbols are available but the source is not a Boost Unit Test version >= 3 module
+                        var listContent = DebugHelper.FindImport(this.TestRunnerExecutable, "boost_unit_test_framework", StringComparison.OrdinalIgnoreCase) // Boost linked dynamically
+                            || symbols.Any(symbol =>
+                                   (symbol == "boost::unit_test::runtime_config::LIST_CONTENT") ||     // Boost 1.60 - Boost 1.63
+                                   (symbol == "boost::unit_test::runtime_config::btrt_list_content")   // Boost 1.64 - Boost 1.65
+                               );
+
+                        if (!listContent)
+                        {
+                            Logger.Warn(Resources.CouldNotLocateDebugSymbols, this.TestRunnerExecutable);
+                        }
+
+                        // Don't bother checking for the '--version' symbol if '--list_content' is not available
+                        var version = listContent && symbols.Any(symbol =>
+                            (symbol == "boost::unit_test::runtime_config::VERSION") ||          // Boost 1.63
+                            (symbol == "boost::unit_test::runtime_config::btrt_version")        // Boost 1.64 - Boost 1.65
+                        );
+
+                        return new BoostTestRunnerCapabilities {
+                            ListContent = listContent,
+                            Version = version
+                        };
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Creates a DebugHelper instance for the specified source
+        /// </summary>
+        /// <param name="source">The module/source for which to inspect debug symbols</param>
+        /// <returns>A new DebugHelper instance for the specified source or null if one cannot be created</returns>
+        private static DebugHelper CreateDebugHelper(string source)
+        {
+            try
+            {
+                return new DebugHelper(source);
+            }
+            catch (Win32Exception ex)
+            {
+                Logger.Exception(ex, Resources.CouldNotCreateDbgHelp, source);
+            }
+
+            return null;
         }
     }
 }
