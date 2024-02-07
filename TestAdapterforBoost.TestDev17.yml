@@ -1,0 +1,216 @@
+# This Yaml Document has been converted by ESAI Yaml Pipeline Conversion Tool.
+# Please make sure to check all the converted content, it is your team's responsibility to make sure that the pipeline is still valid and functions as expected.
+# The SBOM tasks have been removed because they are not required for the unofficial template.
+# You can manually enable SBOM in the unofficial template if needed, othewise its automatically enabled when using official template. https://eng.ms/docs/cloud-ai-platform/devdiv/one-engineering-system-1es/1es-docs/1es-pipeline-templates/features/sbom
+# This pipeline will be extended to the OneESPT template
+# If you are not using the E+D shared hosted pool with windows-2022, replace the pool section with your hosted pool, os, and image name. If you are using a Linux image, you must specify an additional windows image for SDL: https://eng.ms/docs/cloud-ai-platform/devdiv/one-engineering-system-1es/1es-docs/1es-pipeline-templates/features/sdlanalysis/overview#how-to-specify-a-windows-pool-for-the-sdl-source-analysis-stage
+# The Task 'PublishBuildArtifacts@1' has been converted to an output named 'Publish Artifact: drop' in the templateContext section.
+trigger:
+  branches:
+    include:
+    - refs/heads/dev17
+  batch: True
+name: $(date:yyyyMMdd)$(rev:.r)
+resources:
+  repositories:
+  - repository: MicroBuildTemplate
+    type: git
+    name: 1ESPipelineTemplates/MicroBuildTemplate
+    ref: refs/tags/release
+variables:
+- name: ArtifactServices.Symbol.AccountName
+  value: devdiv
+- name: ArtifactServices.Symbol.PAT
+  value: "$(BoostTestSymbolsPat)"
+- name: ArtifactServices.Symbol.UseAAD
+  value: false
+- name: BuildConfiguration
+  value: Release
+- name: BuildPlatform
+  value: Any CPU
+- name: DropRoot
+  value: '\\cpvsbuild\drops'
+- name: Packaging.EnableSBOMSigning
+  value: False
+- name: ProductComponent
+  value: True
+- name: Publish
+  value: False
+- name: RealSign
+  value: False
+- name: RetainBuild
+  value: False
+- name: SignType
+  value: Test
+- name: TeamName
+  value: VCLS
+extends:
+  template: azure-pipelines/MicroBuild.1ES.Official.yml@MicroBuildTemplate
+  parameters:
+    pool:
+      name: VSEngSS-MicroBuild2022GPT-1ES
+    sdl:
+      sourceAnalysisPool:
+        name: VSEngSS-MicroBuild2022-1ES
+      sourceRepositoriesToScan:
+        exclude:
+        - repository: MicroBuildTemplate
+        - repository: vs-boost-unit-test-adapter
+    customBuildTags:
+    - ES365AIMigrationTooling
+    stages:
+    - stage: stage
+      jobs:
+      - job: Phase_1
+        displayName: Phase 1
+        timeoutInMinutes: 120
+        cancelTimeoutInMinutes: 1
+        templateContext:
+          outputs:
+          - output: pipelineArtifact
+            displayName: 'Publish Artifact: drop'
+            targetPath: $(Build.ArtifactStagingDirectory)\drop
+        steps:
+        - checkout: self
+          displayName: 'Checkout vs-boost-unit-test-adapter Git Repo'
+          clean: true
+          fetchDepth: 1
+          persistCredentials: true
+        - task: NuGetToolInstaller@1
+          displayName: Install NuGet
+          inputs:
+            versionSpec: 5.9.1
+        - task: ms-vseng.MicroBuildTasks.a0262b21-fb8f-46f8-bb9a-60ed560d4a87.MicroBuildLocalizationPlugin@1
+          displayName: Install Localization Plugin
+        - task: ms-vseng.MicroBuildTasks.30666190-6959-11e5-9f96-f56098202fef.MicroBuildSigningPlugin@1
+          displayName: Install Signing Plugin
+          inputs:
+            signType: $(SignType)
+        - task: ms-vseng.MicroBuildTasks.32f78468-e895-4f47-962c-58a699361df8.MicroBuildSwixPlugin@4
+          displayName: Install Swix Plugin
+        - task: PowerShell@2
+          displayName: Set Version
+          inputs:
+            targetType: filePath
+            filePath: './SetVersion.ps1'
+            arguments: '-version 1.1.0.10'
+        - task: PowerShell@1
+          displayName: Copy internal key
+          inputs:
+            scriptType: inlineScript
+            inlineScript: Invoke-WebRequest -Headers @{"AUTHORIZATION"="bearer $env:SYSTEM_ACCESSTOKEN"}-OutFile 'FinalPublicKey.snk' 'https://devdiv.visualstudio.com/DefaultCollection/0bdbc590-a062-4c3f-b0f6-9383f67865ee/0c9127d6-f650-4a04-9399-25be18b8e2fb/_api/_versioncontrol/itemContent?repositoryId=2961dea4-f77c-4c8e-b46f-72b6bfe62c29&path=%2FInternalAPIs%2FDevDiv%2FFinalPublicKey.snk&version=GBdev15'
+        - task: PowerShell@1
+          displayName: Add Keys for RealSign to TAfBT
+          inputs:
+            scriptType: inlineScript
+            inlineScript: |-
+              $projects_to_sign = @(
+                "Antlr.DOT\Antlr.DOT.csproj",
+                "BoostTestAdapter\BoostTestAdapter.csproj",
+                "BoostTestPackage\BoostTestPackage.csproj",
+                "BoostTestPlugin\BoostTestPlugin.csproj",
+                "BoostTestShared\BoostTestShared.csproj",
+                "ThirdPartySigning\ThirdPartySigning.csproj",
+                "VisualStudioAdapter\VisualStudioAdapter.csproj"
+              )
+              $projects_to_sign | ForEach-Object {
+                $xml = [xml](Get-Content $_)
+                $KeyFile = $xml.CreateElement("AssemblyOriginatorKeyFile", "http://schemas.microsoft.com/developer/msbuild/2003")
+                $KeyFile.set_InnerXML("`$(EnlistmentRoot)FinalPublicKey.snk")
+                $xml | ForEach-Object { $_.Project.PropertyGroup | ForEach-Object { if ($_.Condition -like '*(RealSign)'' == ''True''') { $_.AppendChild($KeyFile) } } }
+                $xml.Save("$pwd\$_")
+              }
+        - task: NuGetCommand@2
+          displayName: NuGet restore for ThirdPartySigning and MicroBuild.Core
+          inputs:
+            solution: packages.config
+            selectOrConfig: config
+            nugetConfigPath: NuGet.config
+            noCache: true
+            packagesDirectory: NuGetPackages
+        - task: NuGetCommand@2
+          displayName: NuGet restore
+          inputs:
+            solution: BoostTestAdapter.sln
+            selectOrConfig: config
+            nugetConfigPath: NuGet.config
+            noCache: true
+        - task: VSBuild@1
+          displayName: Build solution BoostTestAdapter.sln
+          inputs:
+            solution: BoostTestAdapter.sln
+            platform: $(BuildPlatform)
+            configuration: $(BuildConfiguration)
+            maximumCpuCount: true
+        - task: CopyFiles@2
+          displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)\drop'
+          inputs:
+            Contents: '**\out\binaries\**'
+            TargetFolder: $(Build.ArtifactStagingDirectory)\drop
+        - task: NuGetCommand@2
+          displayName: NuGet restore for vsmanproj
+          inputs:
+            solution: swix/packages.config
+            selectOrConfig: config
+            nugetConfigPath: NuGet.config
+            noCache: true
+            packagesDirectory: ..\NugetPackages
+          continueOnError: true
+        - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+          displayName: 'Manifest Generator '
+          inputs:
+            BuildDropPath: '$(Build.ArtifactStagingDirectory)\drop'
+            PackageName: 'Test Adapter for Boost.Test'
+            PackageVersion: 1.1.0.4
+        - task: VSBuild@1
+          displayName: Build vsmanproj
+          condition: and(succeeded(), eq(variables['ProductComponent'], true))
+          inputs:
+            solution: swix/Microsoft.VisualStudio.VC.Ide.TestAdapterForBoostTest.vsmanproj
+            msbuildArgs: /p:ArtifactsDir=$(Build.ArtifactStagingDirectory)
+            platform: $(BuildPlatform)
+            configuration: $(BuildConfiguration)
+        - task: PublishSymbols@1
+          displayName: 'Publish symbols path: '
+          inputs:
+            SearchPattern: out\binaries\**\*.pdb
+          continueOnError: true
+        - task: CopyFiles@2
+          displayName: Copy setup files to drop root
+          inputs:
+            SourceFolder: out\binaries\$(BuildConfiguration)\Microsoft.VisualStudio.VC.Ide.TestAdapterForBoostTest
+            Contents: '*'
+            TargetFolder: $(Build.ArtifactStagingDirectory)\drop
+          continueOnError: true
+        - task: CopyFiles@2
+          displayName: Copy vsix to root
+          inputs:
+            SourceFolder: out\binaries\$(BuildConfiguration)\BoostTestPlugin
+            Contents: BoostUnitTestAdapter.vsix
+            TargetFolder: $(Build.ArtifactStagingDirectory)\drop
+          continueOnError: true
+        - task: 1ES.MicroBuildVstsDrop@1
+          displayName: Upload VSTS Drop
+          inputs:
+            dropFolder: $(Build.ArtifactStagingDirectory)\drop
+            dropName: Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)
+            accessToken: $(System.AccessToken)
+            dropServiceUri: https://devdiv.artifacts.visualstudio.com/DefaultCollection
+            vsDropServiceUri: "https://vsdrop.corp.microsoft.com/file/v1"
+        - task: ms-vseng.MicroBuildShipTasks.4a4e1dc3-01d0-484f-94ac-f918aaf7d509.MicroBuildRetainVstsDrops@1
+          displayName: Retain VSTS Drops
+          condition: and(succeeded(), eq(variables['RetainBuild'], true))
+          inputs:
+            DropNames: Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)
+            AccessToken: $(System.AccessToken)
+            DropServiceUri: https://devdiv.artifacts.visualstudio.com/DefaultCollection
+        - task: PublishSymbols@2
+          displayName: Publish symbols path
+          inputs:
+            SymbolsFolder: $(Build.ArtifactStagingDirectory)\drop
+            SearchPattern: '**/*.pdb'
+            SymbolServerType: TeamServices
+            TreatNotIndexedAsWarning: true
+        - task: ms-vseng.MicroBuildTasks.521a94ea-9e68-468a-8167-6dcf361ea776.MicroBuildCleanup@1
+          displayName: Perform Cleanup Tasks
+          condition: always()
