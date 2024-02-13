@@ -18,6 +18,12 @@ resources:
     name: 1ESPipelineTemplates/MicroBuildTemplate
     ref: refs/tags/release
 variables:
+- name: ApiScanClientId
+  value: 1d6a3de7-4a6a-4b75-b15d-e305293c75af
+- name: ApiScanSecret
+  value: "$(TAfBTAPIScanSecret)"
+- name: ApiScanTenant
+  value: 72f988bf-86f1-41af-91ab-2d7cd011db47
 - name: ArtifactServices.Symbol.AccountName
   value: devdiv
 - name: ArtifactServices.Symbol.PAT
@@ -25,23 +31,27 @@ variables:
 - name: ArtifactServices.Symbol.UseAAD
   value: false
 - name: BuildConfiguration
-  value: Release
+  value: "$(TAfBTBuildConfiguration)"
 - name: BuildPlatform
   value: Any CPU
+- name: CodeQL.Enabled
+  value: True
+- name: CodeQL.TSAEnabled
+  value: True
 - name: DropRoot
   value: '\\cpvsbuild\drops'
 - name: Packaging.EnableSBOMSigning
-  value: False
+  value: "$(TAfBTEnableSBOMSigning)"
 - name: ProductComponent
-  value: True
+  value: "$(TAfBTProductComponent)"
 - name: Publish
-  value: False
+  value: "$(TAfBTPublish)"
 - name: RealSign
-  value: False
+  value: "$(TAfBTRealSign)"
 - name: RetainBuild
-  value: False
+  value: "$(TAfBTRetainBuild)"
 - name: SignType
-  value: Test
+  value: "$(TAfBTSignType)"
 - name: TeamName
   value: VCLS
 extends:
@@ -63,13 +73,13 @@ extends:
       jobs:
       - job: Phase_1
         displayName: Phase 1
-        timeoutInMinutes: 120
+        timeoutInMinutes: 0
         cancelTimeoutInMinutes: 1
         templateContext:
           outputs:
           - output: pipelineArtifact
-            displayName: 'Publish Artifact: drop'
-            targetPath: $(Build.ArtifactStagingDirectory)\drop
+            displayName: 'Publish Artifact: templateContextDrop'
+            targetPath: $(Build.ArtifactStagingDirectory)\templateContextDrop
         steps:
         - checkout: self
           displayName: 'Checkout vs-boost-unit-test-adapter Git Repo'
@@ -143,10 +153,16 @@ extends:
             configuration: $(BuildConfiguration)
             maximumCpuCount: true
         - task: CopyFiles@2
-          displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)\drop'
+          displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)\BoostTestDrop'
           inputs:
             Contents: '**\out\binaries\**'
-            TargetFolder: $(Build.ArtifactStagingDirectory)\drop
+            TargetFolder: $(Build.ArtifactStagingDirectory)\BoostTestDrop
+        - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+          displayName: 'Manifest Generator '
+          inputs:
+            BuildDropPath: '$(Build.ArtifactStagingDirectory)\BoostTestDrop'
+            PackageName: 'Test Adapter for Boost.Test'
+            PackageVersion: 1.1.0.4
         - task: NuGetCommand@2
           displayName: NuGet restore for vsmanproj
           inputs:
@@ -156,12 +172,6 @@ extends:
             noCache: true
             packagesDirectory: ..\NugetPackages
           continueOnError: true
-        - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
-          displayName: 'Manifest Generator '
-          inputs:
-            BuildDropPath: '$(Build.ArtifactStagingDirectory)\drop'
-            PackageName: 'Test Adapter for Boost.Test'
-            PackageVersion: 1.1.0.4
         - task: VSBuild@1
           displayName: Build vsmanproj
           condition: and(succeeded(), eq(variables['ProductComponent'], true))
@@ -170,25 +180,41 @@ extends:
             msbuildArgs: /p:ArtifactsDir=$(Build.ArtifactStagingDirectory)
             platform: $(BuildPlatform)
             configuration: $(BuildConfiguration)
-        - task: PublishSymbols@1
-          displayName: 'Publish symbols path: '
-          inputs:
-            SearchPattern: out\binaries\**\*.pdb
-          continueOnError: true
         - task: CopyFiles@2
-          displayName: Copy setup files to drop root
+          displayName: Copy setup files to BoostTestDrop root
           inputs:
             SourceFolder: out\binaries\$(BuildConfiguration)\Microsoft.VisualStudio.VC.Ide.TestAdapterForBoostTest
             Contents: '*'
-            TargetFolder: $(Build.ArtifactStagingDirectory)\drop
+            TargetFolder: $(Build.ArtifactStagingDirectory)\BoostTestDrop
           continueOnError: true
         - task: CopyFiles@2
           displayName: Copy vsix to root
           inputs:
             SourceFolder: out\binaries\$(BuildConfiguration)\BoostTestPlugin
             Contents: BoostUnitTestAdapter.vsix
-            TargetFolder: $(Build.ArtifactStagingDirectory)\drop
+            TargetFolder: $(Build.ArtifactStagingDirectory)\BoostTestDrop
           continueOnError: true
+        - task: PoliCheck@2
+          inputs:
+            targetType: 'F'
+            targetArgument: '$(Build.SourcesDirectory)'
+        - task: 1ES.PublishPipelineArtifact@1
+          displayName: 'Publish Artifact: BoostTestDrop'
+          inputs:
+            path: '$(Build.ArtifactStagingDirectory)\BoostTestDrop'
+            artifact: BoostTestDrop
+        - task: securedevelopmentteam.vss-secure-development-tools.build-task-apiscan.APIScan@2
+          displayName: 'Run APIScan'
+          inputs:
+            softwareFolder: '$(Build.ArtifactStagingDirectory)\BoostTestDrop'
+            softwareName: BoostTest
+            softwareVersionNum: 1.0
+            isLargeApp: false
+            toolVersion: 'Latest'
+            verbosityLevel: silent
+            continueOnError: true
+          env:
+            AzureServicesAuthConnectionString: runAs=App;AppId=$(ApiScanClientId);TenantId=$(ApiScanTenant);AppKey=$(ApiScanSecret)
         - task: 1ES.MicroBuildVstsDrop@1
           displayName: Upload VSTS Drop
           inputs:
@@ -211,6 +237,17 @@ extends:
             SearchPattern: '**/*.pdb'
             SymbolServerType: TeamServices
             TreatNotIndexedAsWarning: true
+        - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@3
+          displayName: 'Publish Guardian Artifacts'
+          inputs:
+            PublishProcessedResults: true
+          continueOnError: true
+        - task: TSAUpload@2
+          displayName: 'TSA Upload'
+          inputs:
+            GdnPublishTsaOnboard: false
+            GdnPublishTsaConfigFile: '$(Build.SourcesDirectory)\TSAOptions.json'
+          continueOnError: true
         - task: ms-vseng.MicroBuildTasks.521a94ea-9e68-468a-8167-6dcf361ea776.MicroBuildCleanup@1
           displayName: Perform Cleanup Tasks
           condition: always()
