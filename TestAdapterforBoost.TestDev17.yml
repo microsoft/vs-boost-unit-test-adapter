@@ -10,6 +10,13 @@ trigger:
     include:
     - refs/heads/dev17
   batch: True
+schedules:
+  - cron: "0 7 1 * *"
+    displayName: Monthly Run
+    branches:
+      include:
+        - refs/heads/dev17
+    always: true
 name: $(date:yyyyMMdd)$(rev:.r)
 resources:
   repositories:
@@ -46,6 +53,9 @@ variables:
   value: "$(TAfBTProductComponent)"
 - name: Publish
   value: "$(TAfBTPublish)"
+# Quick build is used to skip some compliance tasks to quickly generate a .vsix for testing.
+- name: QuickBuild
+  value: "$(TAfBTQuickBuild)"
 - name: RealSign
   value: "$(TAfBTRealSign)"
 - name: RetainBuild
@@ -54,6 +64,8 @@ variables:
   value: "$(TAfBTSignType)"
 - name: TeamName
   value: VCLS
+- name: VersionNumber
+  value: "$(TAfBTVersionNumber)"
 extends:
   template: azure-pipelines/MicroBuild.1ES.Official.yml@MicroBuildTemplate
   parameters:
@@ -63,9 +75,6 @@ extends:
       sourceAnalysisPool:
         name: VSEngSS-MicroBuild2022-1ES
       sourceRepositoriesToScan:
-        exclude:
-        - repository: MicroBuildTemplate
-        - repository: vs-boost-unit-test-adapter
     customBuildTags:
     - ES365AIMigrationTooling
     stages:
@@ -78,8 +87,8 @@ extends:
         templateContext:
           outputs:
           - output: pipelineArtifact
-            displayName: 'Publish Artifact: templateContextDrop'
-            targetPath: $(Build.ArtifactStagingDirectory)\templateContextDrop
+            displayName: 'Publish Artifact: drop'
+            targetPath: $(Build.ArtifactStagingDirectory)\drop
         steps:
         - checkout: self
           displayName: 'Checkout vs-boost-unit-test-adapter Git Repo'
@@ -103,7 +112,9 @@ extends:
           inputs:
             targetType: filePath
             filePath: './SetVersion.ps1'
-            arguments: '-version 1.1.0.10'
+            arguments: '-version $(PassVariable.VersionNumber)'
+          env:
+            VersionNumber: $(VersionNumber)
         - task: PowerShell@1
           displayName: Copy internal key
           inputs:
@@ -194,17 +205,17 @@ extends:
             Contents: BoostUnitTestAdapter.vsix
             TargetFolder: $(Build.ArtifactStagingDirectory)\BoostTestDrop
           continueOnError: true
+        # This is a time-consuming compliance task, so if we want to run a quick build (off by default), then we skip this task.
         - task: PoliCheck@2
+          displayName: 'PoliCheck'
+          condition: eq (variables.QuickBuild, False)
           inputs:
             targetType: 'F'
             targetArgument: '$(Build.SourcesDirectory)'
-        - task: 1ES.PublishPipelineArtifact@1
-          displayName: 'Publish Artifact: BoostTestDrop'
-          inputs:
-            path: '$(Build.ArtifactStagingDirectory)\BoostTestDrop'
-            artifact: BoostTestDrop
+        # This is a time-consuming compliance task, so if we want to run a quick build (off by default), then we skip this task.
         - task: securedevelopmentteam.vss-secure-development-tools.build-task-apiscan.APIScan@2
           displayName: 'Run APIScan'
+          condition: eq (variables.QuickBuild, False)
           inputs:
             softwareFolder: '$(Build.ArtifactStagingDirectory)\BoostTestDrop'
             softwareName: BoostTest
@@ -215,6 +226,21 @@ extends:
             continueOnError: true
           env:
             AzureServicesAuthConnectionString: runAs=App;AppId=$(ApiScanClientId);TenantId=$(ApiScanTenant);AppKey=$(ApiScanSecret)
+        # This is a time-consuming compliance task, so if we want to run a quick build (off by default), then we skip this task.
+        - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@3
+          displayName: 'Publish Guardian Artifacts'
+          condition: eq (variables.QuickBuild, False)
+          inputs:
+            PublishProcessedResults: true
+          continueOnError: true
+        # This is a time-consuming compliance task, so if we want to run a quick build (off by default), then we skip this task.
+        - task: TSAUpload@2
+          displayName: 'TSA Upload'
+          condition: eq (variables.QuickBuild, False)
+          inputs:
+            GdnPublishTsaOnboard: false
+            GdnPublishTsaConfigFile: '$(Build.SourcesDirectory)\TSAOptions.json'
+          continueOnError: true
         - task: 1ES.MicroBuildVstsDrop@1
           displayName: Upload VSTS Drop
           inputs:
@@ -237,17 +263,11 @@ extends:
             SearchPattern: '**/*.pdb'
             SymbolServerType: TeamServices
             TreatNotIndexedAsWarning: true
-        - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@3
-          displayName: 'Publish Guardian Artifacts'
+        - task: 1ES.PublishPipelineArtifact@1
+          displayName: 'Publish Artifact: BoostTestDrop'
           inputs:
-            PublishProcessedResults: true
-          continueOnError: true
-        - task: TSAUpload@2
-          displayName: 'TSA Upload'
-          inputs:
-            GdnPublishTsaOnboard: false
-            GdnPublishTsaConfigFile: '$(Build.SourcesDirectory)\TSAOptions.json'
-          continueOnError: true
+            path: '$(Build.ArtifactStagingDirectory)\BoostTestDrop'
+            artifact: BoostTestDrop
         - task: ms-vseng.MicroBuildTasks.521a94ea-9e68-468a-8167-6dcf361ea776.MicroBuildCleanup@1
           displayName: Perform Cleanup Tasks
           condition: always()
