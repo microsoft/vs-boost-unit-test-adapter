@@ -157,14 +157,14 @@ extends:
             configuration: $(BuildConfiguration)
             maximumCpuCount: true
         - task: CopyFiles@2
-          displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)\BoostTestDrop'
+          displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)\drop'
           inputs:
             Contents: '**\out\binaries\**'
-            TargetFolder: $(Build.ArtifactStagingDirectory)\BoostTestDrop
+            TargetFolder: $(Build.ArtifactStagingDirectory)\drop
         - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
           displayName: 'Manifest Generator '
           inputs:
-            BuildDropPath: '$(Build.ArtifactStagingDirectory)\BoostTestDrop'
+            BuildDropPath: '$(Build.ArtifactStagingDirectory)\drop'
             PackageName: 'Test Adapter for Boost.Test'
             PackageVersion: 1.1.0.4
         - task: NuGetCommand@2
@@ -185,18 +185,18 @@ extends:
             platform: $(BuildPlatform)
             configuration: $(BuildConfiguration)
         - task: CopyFiles@2
-          displayName: Copy setup files to BoostTestDrop root
+          displayName: Copy setup files to drop root
           inputs:
             SourceFolder: out\binaries\$(BuildConfiguration)\Microsoft.VisualStudio.VC.Ide.TestAdapterForBoostTest
             Contents: '*'
-            TargetFolder: $(Build.ArtifactStagingDirectory)\BoostTestDrop
+            TargetFolder: $(Build.ArtifactStagingDirectory)\drop
           continueOnError: true
         - task: CopyFiles@2
           displayName: Copy vsix to root
           inputs:
             SourceFolder: out\binaries\$(BuildConfiguration)\BoostTestPlugin
             Contents: BoostUnitTestAdapter.vsix
-            TargetFolder: $(Build.ArtifactStagingDirectory)\BoostTestDrop
+            TargetFolder: $(Build.ArtifactStagingDirectory)\drop
           continueOnError: true
         # This is a time-consuming compliance task, so if we want to run a quick build (off by default), then we skip this task.
         - task: PoliCheck@2
@@ -210,7 +210,7 @@ extends:
           displayName: 'Run APIScan'
           condition: eq (variables.QuickBuild, False)
           inputs:
-            softwareFolder: '$(Build.ArtifactStagingDirectory)\BoostTestDrop'
+            softwareFolder: '$(Build.ArtifactStagingDirectory)\drop'
             softwareName: BoostTest
             softwareVersionNum: 1.0
             isLargeApp: false
@@ -256,11 +256,6 @@ extends:
             SearchPattern: '**/*.pdb'
             SymbolServerType: TeamServices
             TreatNotIndexedAsWarning: true
-        - task: 1ES.PublishPipelineArtifact@1
-          displayName: 'Publish Artifact: BoostTestDrop'
-          inputs:
-            path: '$(Build.ArtifactStagingDirectory)\BoostTestDrop'
-            artifact: BoostTestDrop
         - task: ms-vseng.MicroBuildTasks.521a94ea-9e68-468a-8167-6dcf361ea776.MicroBuildCleanup@1
           displayName: Perform Cleanup Tasks
           condition: always()
