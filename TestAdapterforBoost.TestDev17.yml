@@ -13,6 +13,7 @@ schedules:
       include:
         - refs/heads/dev17
     always: true
+name: $(date:yyyyMMdd)$(rev:.r)
 resources:
   repositories:
   - repository: MicroBuildTemplate
@@ -70,6 +71,9 @@ extends:
       sourceAnalysisPool:
         name: VSEngSS-MicroBuild2022-1ES
       sourceRepositoriesToScan:
+      tsa:
+        enabled: true
+        configFile: '$(Build.SourcesDirectory)\TSAOptions.json'
     customBuildTags:
     - ES365AIMigrationTooling
     stages:
@@ -225,14 +229,6 @@ extends:
           condition: eq (variables.QuickBuild, False)
           inputs:
             PublishProcessedResults: true
-          continueOnError: true
-        # This is a time-consuming compliance task, so if we want to run a quick build (off by default), then we skip this task.
-        - task: TSAUpload@2
-          displayName: 'TSA Upload'
-          condition: eq (variables.QuickBuild, False)
-          inputs:
-            GdnPublishTsaOnboard: false
-            GdnPublishTsaConfigFile: '$(Build.SourcesDirectory)\TSAOptions.json'
           continueOnError: true
         - task: 1ES.MicroBuildVstsDrop@1
           displayName: Upload VSTS Drop
