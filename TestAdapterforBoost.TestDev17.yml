@@ -57,7 +57,7 @@ variables:
 - name: QuickBuild
   value: "$(TAfBTQuickBuild)"
 - name: RealSign
-  value: "$(TAfBTRealSign)"
+  value: "$(RealSign)"
 - name: RetainBuild
   value: "$(TAfBTRetainBuild)"
 - name: SignType
