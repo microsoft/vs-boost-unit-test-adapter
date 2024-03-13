@@ -6,11 +6,11 @@
     "tsaEnvironment": "PROD",
     "notificationAliases": [
        "davidraygoza@microsoft.com",
-       "cpp-apogee@microsoft.com"
+       "cppintellisense@microsoft.com"
     ],
     "codebaseAdmins": [
         "NORTHAMERICA\\davidraygoza",
-        "REDMOND\\cpp-apogee"
+        "REDMOND\\cppintellisense"
     ],
     "instanceUrl": "https://devdiv.visualstudio.com",
     "projectName": "DevDiv",
