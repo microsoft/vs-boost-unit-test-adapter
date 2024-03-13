@@ -20,6 +20,10 @@ resources:
     type: git
     name: 1ESPipelineTemplates/MicroBuildTemplate
     ref: refs/tags/release
+  - repository: VCLS-Extensions
+    type: git
+    name: VCLS-Extensions
+    ref: refs/heads/dev17
 variables:
 - name: ApiScanClientId
   value: 1d6a3de7-4a6a-4b75-b15d-e305293c75af
@@ -53,7 +57,7 @@ variables:
 - name: QuickBuild
   value: "$(TAfBTQuickBuild)"
 - name: RealSign
-  value: "$(TAfBTRealSign)"
+  value: "$(RealSign)"
 - name: RetainBuild
   value: "$(TAfBTRetainBuild)"
 - name: SignType
@@ -71,9 +75,12 @@ extends:
       sourceAnalysisPool:
         name: VSEngSS-MicroBuild2022-1ES
       sourceRepositoriesToScan:
+        exclude:
+        # No need to scan this source as we only use this repo to copy the public signing key.
+        - repository: VCLS-Extensions
       tsa:
         enabled: true
-        configFile: '$(Build.SourcesDirectory)\TSAOptions.json'
+        configFile: '$(Build.SourcesDirectory)\vs-boost-unit-test-adapter\TSAOptions.json'
     customBuildTags:
     - ES365AIMigrationTooling
     stages:
@@ -94,6 +101,11 @@ extends:
           clean: true
           fetchDepth: 1
           persistCredentials: true
+        - checkout: VCLS-Extensions
+          displayName: 'Checkout VCLS-Extensions ADO Repo to copy public key'
+          clean: true
+          fetchDepth: 1
+          persistCredentials: true
         - task: NuGetToolInstaller@1
           displayName: Install NuGet
           inputs:
@@ -110,26 +122,27 @@ extends:
           displayName: Set Version
           inputs:
             targetType: filePath
-            filePath: './SetVersion.ps1'
+            filePath: './vs-boost-unit-test-adapter/SetVersion.ps1'
             arguments: '-version $(VersionNumber)'
-        - task: PowerShell@1
-          displayName: Copy internal key
+        - task: CopyFiles@2
+          displayName: 'Copy FinalPublicKey.snk to vs-boost-unit-test-adapter'
           inputs:
-            scriptType: inlineScript
-            inlineScript: Invoke-WebRequest -Headers @{"AUTHORIZATION"="bearer $env:SYSTEM_ACCESSTOKEN"}-OutFile 'FinalPublicKey.snk' 'https://devdiv.visualstudio.com/DefaultCollection/0bdbc590-a062-4c3f-b0f6-9383f67865ee/0c9127d6-f650-4a04-9399-25be18b8e2fb/_api/_versioncontrol/itemContent?repositoryId=2961dea4-f77c-4c8e-b46f-72b6bfe62c29&path=%2FInternalAPIs%2FDevDiv%2FFinalPublicKey.snk&version=GBdev15'
+            SourceFolder: '$(Build.SourcesDirectory)/VCLS-Extensions/InternalAPIs/DevDiv'
+            Contents: 'FinalPublicKey.snk'
+            TargetFolder: '$(Build.SourcesDirectory)/vs-boost-unit-test-adapter'
         - task: PowerShell@1
           displayName: Add Keys for RealSign to TAfBT
           inputs:
             scriptType: inlineScript
             inlineScript: |-
               $projects_to_sign = @(
-                "Antlr.DOT\Antlr.DOT.csproj",
-                "BoostTestAdapter\BoostTestAdapter.csproj",
-                "BoostTestPackage\BoostTestPackage.csproj",
-                "BoostTestPlugin\BoostTestPlugin.csproj",
-                "BoostTestShared\BoostTestShared.csproj",
-                "ThirdPartySigning\ThirdPartySigning.csproj",
-                "VisualStudioAdapter\VisualStudioAdapter.csproj"
+                "vs-boost-unit-test-adapter\Antlr.DOT\Antlr.DOT.csproj",
+                "vs-boost-unit-test-adapter\BoostTestAdapter\BoostTestAdapter.csproj",
+                "vs-boost-unit-test-adapter\BoostTestPackage\BoostTestPackage.csproj",
+                "vs-boost-unit-test-adapter\BoostTestPlugin\BoostTestPlugin.csproj",
+                "vs-boost-unit-test-adapter\BoostTestShared\BoostTestShared.csproj",
+                "vs-boost-unit-test-adapter\ThirdPartySigning\ThirdPartySigning.csproj",
+                "vs-boost-unit-test-adapter\VisualStudioAdapter\VisualStudioAdapter.csproj"
               )
               $projects_to_sign | ForEach-Object {
                 $xml = [xml](Get-Content $_)
@@ -141,22 +154,22 @@ extends:
         - task: NuGetCommand@2
           displayName: NuGet restore for ThirdPartySigning and MicroBuild.Core
           inputs:
-            solution: packages.config
+            solution: vs-boost-unit-test-adapter/swix/packages.config
             selectOrConfig: config
-            nugetConfigPath: NuGet.config
+            nugetConfigPath: vs-boost-unit-test-adapter/NuGet.config
             noCache: true
             packagesDirectory: NuGetPackages
         - task: NuGetCommand@2
           displayName: NuGet restore
           inputs:
-            solution: BoostTestAdapter.sln
+            solution: vs-boost-unit-test-adapter/BoostTestAdapter.sln
             selectOrConfig: config
-            nugetConfigPath: NuGet.config
+            nugetConfigPath: vs-boost-unit-test-adapter/NuGet.config
             noCache: true
         - task: VSBuild@1
           displayName: Build solution BoostTestAdapter.sln
           inputs:
-            solution: BoostTestAdapter.sln
+            solution: vs-boost-unit-test-adapter/BoostTestAdapter.sln
             platform: $(BuildPlatform)
             configuration: $(BuildConfiguration)
             maximumCpuCount: true
@@ -174,9 +187,9 @@ extends:
         - task: NuGetCommand@2
           displayName: NuGet restore for vsmanproj
           inputs:
-            solution: swix/packages.config
+            solution: vs-boost-unit-test-adapter/swix/packages.config
             selectOrConfig: config
-            nugetConfigPath: NuGet.config
+            nugetConfigPath: vs-boost-unit-test-adapter/NuGet.config
             noCache: true
             packagesDirectory: ..\NugetPackages
           continueOnError: true
@@ -184,21 +197,21 @@ extends:
           displayName: Build vsmanproj
           condition: and(succeeded(), eq(variables['ProductComponent'], true))
           inputs:
-            solution: swix/Microsoft.VisualStudio.VC.Ide.TestAdapterForBoostTest.vsmanproj
+            solution: vs-boost-unit-test-adapter/swix/Microsoft.VisualStudio.VC.Ide.TestAdapterForBoostTest.vsmanproj
             msbuildArgs: /p:ArtifactsDir=$(Build.ArtifactStagingDirectory)
             platform: $(BuildPlatform)
             configuration: $(BuildConfiguration)
         - task: CopyFiles@2
           displayName: Copy setup files to drop root
           inputs:
-            SourceFolder: out\binaries\$(BuildConfiguration)\Microsoft.VisualStudio.VC.Ide.TestAdapterForBoostTest
+            SourceFolder: vs-boost-unit-test-adapter\out\binaries\$(BuildConfiguration)\Microsoft.VisualStudio.VC.Ide.TestAdapterForBoostTest
             Contents: '*'
             TargetFolder: $(Build.ArtifactStagingDirectory)\drop
           continueOnError: true
         - task: CopyFiles@2
           displayName: Copy vsix to root
           inputs:
-            SourceFolder: out\binaries\$(BuildConfiguration)\BoostTestPlugin
+            SourceFolder: vs-boost-unit-test-adapter\out\binaries\$(BuildConfiguration)\BoostTestPlugin
             Contents: BoostUnitTestAdapter.vsix
             TargetFolder: $(Build.ArtifactStagingDirectory)\drop
           continueOnError: true
