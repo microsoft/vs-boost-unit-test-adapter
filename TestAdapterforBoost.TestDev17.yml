@@ -81,6 +81,10 @@ extends:
       tsa:
         enabled: true
         configFile: '$(Build.SourcesDirectory)\vs-boost-unit-test-adapter\TSAOptions.json'
+      binskim:
+        enabled: true
+        scanOutputDirectoryOnly: true
+        analyzeTargetGlob: '$(Build.ArtifactStagingDirectory)\FilesToScanDrop\**\*.dll'
     customBuildTags:
     - ES365AIMigrationTooling
     stages:
@@ -215,6 +219,12 @@ extends:
             Contents: BoostUnitTestAdapter.vsix
             TargetFolder: $(Build.ArtifactStagingDirectory)\drop
           continueOnError: true
+        # Pull a list only of files we build and ship to be scanned in FilesToScanDrop.
+        - task: PowerShell@2
+          displayName: 'Copy Scannable Files to: $(Build.ArtifactStagingDirectory)\FilesToScanDrop'
+          inputs:
+            filePath: './vs-boost-unit-test-adapter/FilesToScan.ps1'
+            arguments: '-buildArtifactStagingDirectory $(Build.ArtifactStagingDirectory) -directoryToSearch $(Build.ArtifactStagingDirectory)\drop'
         # This is a time-consuming compliance task, so if we want to run a quick build (off by default), then we skip this task.
         - task: PoliCheck@2
           displayName: 'PoliCheck on vs-boost-unit-test-adapter repo'
@@ -227,7 +237,7 @@ extends:
           displayName: 'Run APIScan'
           condition: eq (variables.QuickBuild, False)
           inputs:
-            softwareFolder: '$(Build.ArtifactStagingDirectory)\drop'
+            softwareFolder: '$(Build.ArtifactStagingDirectory)\FilesToScanDrop'
             softwareName: BoostTest
             softwareVersionNum: 1.0
             isLargeApp: false
