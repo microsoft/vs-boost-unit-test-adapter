@@ -217,11 +217,11 @@ extends:
           continueOnError: true
         # This is a time-consuming compliance task, so if we want to run a quick build (off by default), then we skip this task.
         - task: PoliCheck@2
-          displayName: 'PoliCheck'
+          displayName: 'PoliCheck on vs-boost-unit-test-adapter repo'
           condition: eq (variables.QuickBuild, False)
           inputs:
             targetType: 'F'
-            targetArgument: '$(Build.SourcesDirectory)'
+            targetArgument: '$(Build.SourcesDirectory)/vs-boost-unit-test-adapter'
         # This is a time-consuming compliance task, so if we want to run a quick build (off by default), then we skip this task.
         - task: securedevelopmentteam.vss-secure-development-tools.build-task-apiscan.APIScan@2
           displayName: 'Run APIScan'
