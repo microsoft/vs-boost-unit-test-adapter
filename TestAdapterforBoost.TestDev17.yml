@@ -55,6 +55,8 @@ variables:
   value: True
 - name: CodeQL.TSAEnabled
   value: True
+- name: Codeql.TSAOptionsPath
+  value: $(Build.SourcesDirectory)\vs-boost-unit-test-adapter\TSAOptions.json
 - name: DropRoot
   value: '\\cpvsbuild\drops'
 - name: Packaging.EnableSBOMSigning
