@@ -49,6 +49,8 @@ variables:
   value: Any CPU
 - name: CodeQL.Enabled
   value: True
+- name: Codeql.Language
+  value: csharp,cpp
 - name: CodeQL.TSAEnabled
   value: True
 - name: Codeql.TSAOptionsPath
