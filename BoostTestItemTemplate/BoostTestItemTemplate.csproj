@@ -47,7 +47,10 @@
     <Content Include="Icon.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="Test.cpp" />
+    <ClCompile Include="Test.cpp" />
+    <None Include="Test.cpp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <VSTemplate Include="BoostTest.vstemplate">
       <SubType>Designer</SubType>
       <OutputSubPath>Test</OutputSubPath>
