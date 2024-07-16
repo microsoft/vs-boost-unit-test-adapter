@@ -306,13 +306,11 @@ extends:
             DropNames: Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)
             AccessToken: $(System.AccessToken)
             DropServiceUri: https://devdiv.artifacts.visualstudio.com/DefaultCollection
-        - task: PublishSymbols@2
-          displayName: Publish symbols path
+        - task: PublishSymbols@1
+          displayName: 'Publish Symbols Path'
           inputs:
-            SymbolsFolder: $(Build.ArtifactStagingDirectory)\drop
-            SearchPattern: '**/*.pdb'
-            SymbolServerType: TeamServices
-            TreatNotIndexedAsWarning: true
+            SearchPattern: out\binaries\**\*.pdb
+          continueOnError: true
         - task: ms-vseng.MicroBuildTasks.521a94ea-9e68-468a-8167-6dcf361ea776.MicroBuildCleanup@1
           displayName: Perform Cleanup Tasks
           condition: always()
