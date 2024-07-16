@@ -94,7 +94,9 @@ extends:
       binskim:
         enabled: true
         scanOutputDirectoryOnly: true
-        analyzeTargetGlob: '$(Build.ArtifactStagingDirectory)\FilesToScanDrop\**\*.dll'
+        analyzeTargetGlob: '$(Build.ArtifactStagingDirectory)\drop\FilesToScanDrop\**\*.dll'
+      codeSignValidation:
+        additionalTargetsGlobPattern: -:f|$(Build.ArtifactStagingDirectory)\drop\out\**;-:f|$(Build.ArtifactStagingDirectory)\drop\_manifest\**;-:f|$(Build.ArtifactStagingDirectory)\drop\gdn-BoostUnitTestAdapter.vsix\**;-:f|$(Build.ArtifactStagingDirectory)\drop\*.dll # Include only the files we own, build, and ship (located in /FilesToScanDrop). All other dependency binaries shipped in the .vsix are already signed by Microsoft directly.
       codeql:
         compiled:
           enabled: false
@@ -243,12 +245,12 @@ extends:
             Contents: BoostUnitTestAdapter.vsix
             TargetFolder: $(Build.ArtifactStagingDirectory)\drop
           continueOnError: true
-        # Pull a list only of files we build and ship to be scanned in FilesToScanDrop.
+        # Pull a list only of files we build and ship to be scanned in drop/FilesToScanDrop.
         - task: PowerShell@2
-          displayName: 'Copy Scannable Files to: $(Build.ArtifactStagingDirectory)\FilesToScanDrop'
+          displayName: 'Copy Scannable Files to: $(Build.ArtifactStagingDirectory)\drop\FilesToScanDrop'
           inputs:
             filePath: './FilesToScan.ps1'
-            arguments: '-buildArtifactStagingDirectory $(Build.ArtifactStagingDirectory) -directoryToSearch $(Build.ArtifactStagingDirectory)\drop'
+            arguments: '-buildArtifactStagingDirectory $(Build.ArtifactStagingDirectory)\drop -directoryToSearch $(Build.ArtifactStagingDirectory)\drop'
         # This is a time-consuming compliance task, so if we want to run a quick build (off by default), then we skip this task.
         - task: SDLNativeRules@3
           displayName: 'Run the PREfast SDL Native Rules for MSBuild'
@@ -272,7 +274,7 @@ extends:
           displayName: 'Run APIScan'
           condition: eq (variables.RunAdditionalComplianceChecks, True)
           inputs:
-            softwareFolder: '$(Build.ArtifactStagingDirectory)\FilesToScanDrop'
+            softwareFolder: '$(Build.ArtifactStagingDirectory)\drop\FilesToScanDrop'
             softwareName: BoostTest
             softwareVersionNum: 1.0
             isLargeApp: false
