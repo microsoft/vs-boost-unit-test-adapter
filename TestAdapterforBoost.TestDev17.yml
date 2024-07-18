@@ -94,7 +94,13 @@ extends:
       binskim:
         enabled: true
         scanOutputDirectoryOnly: true
-        analyzeTargetGlob: '$(Build.ArtifactStagingDirectory)\FilesToScanDrop\**\*.dll'
+        analyzeTargetGlob: '$(Build.ArtifactStagingDirectory)\drop\FilesToScanDrop\**\*.dll'
+      codeSignValidation:
+        additionalTargetsGlobPattern: -:f|$(Build.ArtifactStagingDirectory)\drop\out\**;-:f|$(Build.ArtifactStagingDirectory)\drop\_manifest\**;-:f|$(Build.ArtifactStagingDirectory)\drop\gdn-BoostUnitTestAdapter.vsix\**;-:f|$(Build.ArtifactStagingDirectory)\drop\*.dll # Include only the files we own, build, and ship (located in /FilesToScanDrop). All other dependency binaries shipped in the .vsix are already signed by Microsoft directly.
+      codeql:
+        compiled:
+          enabled: false
+          justificationForDisabling: 'There is a bug in the 1ES template that auto injects multiple CodeQL Initialize tasks when checking out multiple repos. This causes an endless CodeQL hang during pipeline builds.'
     customBuildTags:
     - ES365AIMigrationTooling
     stages:
@@ -109,6 +115,12 @@ extends:
           - output: pipelineArtifact
             displayName: 'Publish Artifact: drop'
             targetPath: $(Build.ArtifactStagingDirectory)\drop
+          mb:
+            signing:
+              enabled: true
+              signType: $(SignType)
+            localization:
+              enabled: true
         steps:
         - checkout: self
           displayName: 'Checkout vs-boost-unit-test-adapter Git Repo'
@@ -130,14 +142,11 @@ extends:
           displayName: Install NuGet
           inputs:
             versionSpec: 5.9.1
-        - task: ms-vseng.MicroBuildTasks.a0262b21-fb8f-46f8-bb9a-60ed560d4a87.MicroBuildLocalizationPlugin@1
-          displayName: Install Localization Plugin
-        - task: ms-vseng.MicroBuildTasks.30666190-6959-11e5-9f96-f56098202fef.MicroBuildSigningPlugin@4
-          displayName: Install Signing Plugin
-          inputs:
-            signType: $(SignType)
         - task: ms-vseng.MicroBuildTasks.32f78468-e895-4f47-962c-58a699361df8.MicroBuildSwixPlugin@4
           displayName: Install Swix Plugin
+        # Have to use manual CodeQL Init task for now because the 1ES template auto injected CodeQL contains bug that hangs during pipeline builds.
+        - task: MS-CST-E.codeql-3000-release.init-task.CodeQL3000Init@0
+          displayName: CodeQL 3000 Init
         - task: PowerShell@2
           displayName: Set Version
           inputs:
@@ -236,12 +245,12 @@ extends:
             Contents: BoostUnitTestAdapter.vsix
             TargetFolder: $(Build.ArtifactStagingDirectory)\drop
           continueOnError: true
-        # Pull a list only of files we build and ship to be scanned in FilesToScanDrop.
+        # Pull a list only of files we build and ship to be scanned in drop/FilesToScanDrop.
         - task: PowerShell@2
-          displayName: 'Copy Scannable Files to: $(Build.ArtifactStagingDirectory)\FilesToScanDrop'
+          displayName: 'Copy Scannable Files to: $(Build.ArtifactStagingDirectory)\drop\FilesToScanDrop'
           inputs:
             filePath: './FilesToScan.ps1'
-            arguments: '-buildArtifactStagingDirectory $(Build.ArtifactStagingDirectory) -directoryToSearch $(Build.ArtifactStagingDirectory)\drop'
+            arguments: '-buildArtifactStagingDirectory $(Build.ArtifactStagingDirectory)\drop -directoryToSearch $(Build.ArtifactStagingDirectory)\drop'
         # This is a time-consuming compliance task, so if we want to run a quick build (off by default), then we skip this task.
         - task: SDLNativeRules@3
           displayName: 'Run the PREfast SDL Native Rules for MSBuild'
@@ -265,7 +274,7 @@ extends:
           displayName: 'Run APIScan'
           condition: eq (variables.RunAdditionalComplianceChecks, True)
           inputs:
-            softwareFolder: '$(Build.ArtifactStagingDirectory)\FilesToScanDrop'
+            softwareFolder: '$(Build.ArtifactStagingDirectory)\drop\FilesToScanDrop'
             softwareName: BoostTest
             softwareVersionNum: 1.0
             isLargeApp: false
@@ -274,6 +283,9 @@ extends:
             continueOnError: true
           env:
             AzureServicesAuthConnectionString: runAs=App;AppId=$(ApiScanClientId)
+        # Have to use manual CodeQL Init task for now because the 1ES template auto injected CodeQL contains bug that hangs during pipeline builds.
+        - task: MS-CST-E.codeql-3000-release.finalize-task.CodeQL3000Finalize@0
+          displayName: CodeQL 3000 Finalize
         # This is a time-consuming compliance task, so if we want to run a quick build (off by default), then we skip this task.
         - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@3
           displayName: 'Publish Guardian Artifacts'
@@ -296,13 +308,11 @@ extends:
             DropNames: Products/$(System.TeamProject)/$(Build.Repository.Name)/$(Build.SourceBranchName)/$(Build.BuildNumber)
             AccessToken: $(System.AccessToken)
             DropServiceUri: https://devdiv.artifacts.visualstudio.com/DefaultCollection
-        - task: PublishSymbols@2
-          displayName: Publish symbols path
+        - task: PublishSymbols@1
+          displayName: 'Publish Symbols Path'
           inputs:
-            SymbolsFolder: $(Build.ArtifactStagingDirectory)\drop
-            SearchPattern: '**/*.pdb'
-            SymbolServerType: TeamServices
-            TreatNotIndexedAsWarning: true
+            SearchPattern: out\binaries\**\*.pdb
+          continueOnError: true
         - task: ms-vseng.MicroBuildTasks.521a94ea-9e68-468a-8167-6dcf361ea776.MicroBuildCleanup@1
           displayName: Perform Cleanup Tasks
           condition: always()

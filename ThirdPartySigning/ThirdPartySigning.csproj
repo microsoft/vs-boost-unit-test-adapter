@@ -27,6 +27,10 @@
     <FilesToSign Include="$(OutDir)\log4net.dll" Condition="'$(RealSign)' == 'True'">
       <Authenticode>3PartySHA2</Authenticode>
     </FilesToSign>
+    <FilesToSign Include="$(OutDir)\ThirdPartySigning.dll" Condition="'$(RealSign)' == 'True'">
+      <Authenticode>Microsoft400</Authenticode>
+      <StrongName>StrongName</StrongName>
+    </FilesToSign>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
