@@ -37,6 +37,8 @@ resources:
 variables:
 - name: ApiScanClientId
   value: d318cba7-db4d-4fb3-99e1-01879cb74e91
+- name: ArchiveSymbols
+  value: "$(TAfBTArchiveSymbols)"
 - name: ArtifactServices.Symbol.AccountName
   value: devdiv
 - name: ArtifactServices.Symbol.PAT
@@ -115,6 +117,7 @@ extends:
           - output: pipelineArtifact
             displayName: 'Publish Artifact: drop'
             targetPath: $(Build.ArtifactStagingDirectory)\drop
+            artifactName: drop
           mb:
             signing:
               enabled: true
@@ -313,6 +316,16 @@ extends:
           inputs:
             SearchPattern: out\binaries\**\*.pdb
           continueOnError: true
+        - task: ms-vseng.MicroBuildShipTasks.0ffdda1d-8c7b-40da-b8b1-061660eaeea3.MicroBuildArchiveSymbols@5
+          displayName: 'Archive TestAdapterForBoostTest on Symweb'
+          condition: eq (variables.ArchiveSymbols, True)
+          inputs:
+            SymbolsFeatureName: TestAdapterForBoostTest
+            SymbolsProject: VS
+            SymbolsAgentPath: '$(Build.ArtifactStagingDirectory)\drop'
+        - task: ms-vseng.MicroBuildTasks.521a94ea-9e68-468a-8167-6dcf361ea776.MicroBuildCleanup@1
+          displayName: 'Send Telemetry'
+          condition: eq (variables.ArchiveSymbols, True)
         - task: ms-vseng.MicroBuildTasks.521a94ea-9e68-468a-8167-6dcf361ea776.MicroBuildCleanup@1
           displayName: Perform Cleanup Tasks
           condition: always()
