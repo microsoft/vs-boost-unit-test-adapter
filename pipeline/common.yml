@@ -267,6 +267,8 @@ jobs:
       SymbolsFeatureName: TestAdapterForBoostTest
       SymbolsProject: VS
       SymbolsAgentPath: '$(Build.ArtifactStagingDirectory)\drop'
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
   - task: ms-vseng.MicroBuildTasks.521a94ea-9e68-468a-8167-6dcf361ea776.MicroBuildCleanup@1
     displayName: 'Send Telemetry'
     condition: and(eq (variables.ArchiveSymbols, True), eq('${{ parameters.IsProd }}', true))
