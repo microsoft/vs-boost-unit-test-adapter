@@ -17,6 +17,7 @@
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime" Version="4.6.6" />
     <PackageReference Include="log4net" Version="2.0.15" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="18.10.146" />
     <PackageReference Include="Microsoft.VisualStudioEng.MicroBuild.Core" Version="1.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -25,6 +26,12 @@
       <Authenticode>3PartySHA2</Authenticode>
     </FilesToSign>
     <FilesToSign Include="$(OutDir)\log4net.dll" Condition="'$(RealSign)' == 'True'">
+      <Authenticode>3PartySHA2</Authenticode>
+    </FilesToSign>
+    <FilesToSign Include="$(OutDir)\nerdbank.messagepack.dll" Condition="'$(RealSign)' == 'True'">
+      <Authenticode>3PartySHA2</Authenticode>
+    </FilesToSign>
+    <FilesToSign Include="$(OutDir)\polytype.dll" Condition="'$(RealSign)' == 'True'">
       <Authenticode>3PartySHA2</Authenticode>
     </FilesToSign>
     <FilesToSign Include="$(OutDir)\ThirdPartySigning.dll" Condition="'$(RealSign)' == 'True'">
