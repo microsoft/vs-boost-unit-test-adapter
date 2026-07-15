@@ -29,10 +29,10 @@
     <FilesToSign Include="$(OutDir)\log4net.dll" Condition="'$(RealSign)' == 'True'">
       <Authenticode>3PartySHA2</Authenticode>
     </FilesToSign>
-    <FilesToSign Include="$(OutDir)\nerdbank.messagepack.dll" Condition="'$(RealSign)' == 'True'">
+    <FilesToSign Include="$(OutDir)\Nerdbank.MessagePack.dll" Condition="'$(RealSign)' == 'True'">
       <Authenticode>3PartySHA2</Authenticode>
     </FilesToSign>
-    <FilesToSign Include="$(OutDir)\polytype.dll" Condition="'$(RealSign)' == 'True'">
+    <FilesToSign Include="$(OutDir)\PolyType.dll" Condition="'$(RealSign)' == 'True'">
       <Authenticode>3PartySHA2</Authenticode>
     </FilesToSign>
     <FilesToSign Include="$(OutDir)\ThirdPartySigning.dll" Condition="'$(RealSign)' == 'True'">
