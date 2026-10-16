@@ -21,10 +21,10 @@ extends:
   template: azure-pipelines/MicroBuild.1ES.Unofficial.yml@MicroBuildTemplate
   parameters:
     pool:
-      name: VSEngSS-MicroBuild2022-1ES
+      name: VSEng-MicroBuildVSStable
     sdl:
       sourceAnalysisPool:
-        name: VSEngSS-MicroBuild2022-1ES
+        name: VSEng-MicroBuildVSStable
       sourceRepositoriesToScan:
         exclude:
         # No need to scan this source as we only use this repo to copy the public signing key.
