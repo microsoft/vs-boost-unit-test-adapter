@@ -200,7 +200,7 @@ jobs:
       publishXML: true
       userProvideBuildInfo: auto
       rulesetName: Recommended
-      setupCommandlinePicker: 'vs2022'
+      setupCommandlines: '"C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\Tools\VsMSBuildCmd.bat"'
   # This is a time-consuming compliance task, so if we want to run a quick build (off by default), then we skip this task.
   - task: PoliCheck@2
     displayName: 'PoliCheck on vs-boost-unit-test-adapter repo'
